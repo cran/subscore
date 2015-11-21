@@ -1,10 +1,10 @@
-85f2c25df8a53e73698fc0581cc6317d *DESCRIPTION
+12882808db8cd085ae00177a1a9837ad *DESCRIPTION
 144a83c2945a553e12b2f5143941925e *NAMESPACE
-86d9ad87adf20ba065f1d2f6a8c541f9 *R/CTTsub.R
-e58890e3869689b14dcfb6d2f7b240f1 *R/CTTsub.RegOnSub.r
-d8b7b1f2f92745766dbf36f590173f1f *R/CTTsub.RegOnTot.R
-5e3349a9b9ca0e35aeea854c375af410 *R/CTTsub.RegOnTotSub.R
-10f43180c7cab0afc5c1610f9b121cca *R/data.prep.R
+c7bcae228d44c4ac05d7ed7be98204c8 *R/CTTsub.R
+b8c0eaa16d4af6208fa50fb020b1ca11 *R/CTTsub.RegOnSub.r
+f8ea45e014baa65dedb94726134b5d47 *R/CTTsub.RegOnTot.R
+7b6acb4fe70628f26c9adadeb4e56bd7 *R/CTTsub.RegOnTotSub.R
+e5baf44f0c54b4512b71d6b88bf8a808 *R/data.prep.R
 fd5450eaec70e580cbdb2dd6591cbfb5 *data/scored.data.rda
 d217b96c0979afdf576966ce1fd71aa2 *data/test.data.rda
 a22e5f42f39140e0670f5f2cff940a75 *man/CTTsub.Rd

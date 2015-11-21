@@ -1,7 +1,7 @@
 #' This main function computes subscores using different methods in classical test theory (CTT)
 #' @description This function computes CTT subscores using methods introduced in 
-#' Haberman (2008), Haberman et al. (2009), and Sinharay (2010), which return:\cr
-#' 	(1) Original Observed subscore; \cr
+#' Haberman (2008), Puhan, Sinharay, Haberman, and Larkin(2008), and Sinharay (2010), which return:\cr
+#' 	(1) Original observed subscore; \cr
 #' 	(2) The true subscore is estimated based on the observed subscore;\cr
 #' 	(3) The true subscore is estimated based on the observed  total score;\cr
 #' 	(4) The true subscore is estimated based on 
@@ -14,7 +14,7 @@
 #'         (2) "subscore.original" - It contains original subscores and total score. \cr
 #'         (3) "subscore.RegOnSub" - It contains subscores that are estimated based on the observed subscore. \cr
 #'         (4) "subscore.RegOnTot" -It contains subscores that are estimated based on observed total score.\cr
-#'         (5) "subscore.RegOnTotSub" - It containss subscores that are estimated based on both observed
+#'         (5) "subscore.RegOnTotSub" - It contains subscores that are estimated based on both observed
 #'                                     subscore and the observed total score.\cr
 #' @import CTT
 #' @import stats
@@ -40,7 +40,7 @@ CTTsub<-function (test.data) {
   subscore.list <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list) <- mylist.names
   for (t in 1 : (n.tests))  {
-    subscore.list[[t]]<- rowSums(test.data[[t]])
+    subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = T)
   }  
   
   subscore.original.matrix<-do.call(cbind, subscore.list) 
@@ -66,7 +66,7 @@ CTTsub<-function (test.data) {
 
   mean<-rep(NA,n.tests)
   for (t in 1:n.tests) {
-    mean[t]<-mean(subscore.list[[t]])
+    mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
   }
   mylist.names <- c(paste ('RegOnSub.Score.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnSub <- as.list(rep(NA, length(mylist.names)))
@@ -81,7 +81,7 @@ CTTsub<-function (test.data) {
   PRMSE.RegOnTot<-rep(NA,n.tests)
   r.StXt<-rep(NA,n.tests)
   
-  cov.rowsum<-rowSums(CovMat.true[,1:n.subtests])
+  cov.rowsum<-rowSums(CovMat.true[,1:n.subtests],na.rm = TRUE)
 
   for (t in 1:n.subtests) {    
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])

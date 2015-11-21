@@ -27,7 +27,7 @@ data.prep<-function (scored.data, subtest.infor) {
   test.data[[n.subtests+1]]<-scored.data
   
   for (t in 2:n.subtests) {  
-    test.data[[t]] <-scored.data[,(sum(subtest.infor[2:t])+1):sum(subtest.infor[2:(t+1)])]
+    test.data[[t]] <-scored.data[,(sum(subtest.infor[2:t],na.rm = TRUE)+1):sum(subtest.infor[2:(t+1)],na.rm = TRUE)]
     } 
   return(test.data)
 } 

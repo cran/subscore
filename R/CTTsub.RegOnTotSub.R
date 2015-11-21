@@ -1,8 +1,8 @@
 #' This function Computes subscores based on both the observed subscore and the observed total in classical test theory (CTT)
 #' score
 #' @description This function computes CTT subscores based on both the observed subscore and the observed total
-#' score, using the method introduced in Haberman (2008), Haberman et al. (2009), and Sinharay (2010), which return:\cr
-#' 	(1) Original Observed subscore; \cr
+#' score, using the method introduced in Haberman (2008), Puhan, Sinharay, Haberman, and Larkin(2008), and Sinharay (2010), which return:\cr
+#' 	(1) Original observed subscore; \cr
 #' 	(2) The true subscore is estimated based on 
 #' 	    both the observed subscore and the observed  total score.\cr
 #' @param test.data A list that contains datasets of all subtests and the whole test,
@@ -38,7 +38,7 @@ CTTsub.RegOnTotSub<-function (test.data) {
   names(subscore.list) <- mylist.names
   
   for (t in 1 : (n.tests))  {
-    subscore.list[[t]]<- rowSums(test.data[[t]])
+    subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = TRUE)
   } 
   subscore.original.matrix<-do.call(cbind, subscore.list) 
   
@@ -63,11 +63,11 @@ CTTsub.RegOnTotSub<-function (test.data) {
   
   mean<-rep(NA,n.tests)
   for (t in 1:n.tests) {
-    mean[t]<-mean(subscore.list[[t]])
+    mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
   }
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
   
-  cov.rowsum<-rowSums(CovMat.true[,1:n.subtests])
+  cov.rowsum<-rowSums(CovMat.true[,1:n.subtests],na.rm = TRUE)
   
   r.StXt<-rep(NA,n.tests)
   for (t in 1:(n.tests-1)) {     

@@ -1,7 +1,7 @@
 #' This function computes subscores based on the observed subscore in classical test theory (CTT).
 #' @description This function computes CTT subscores based on the observed subscore, using the methods introduced in 
-#' Haberman (2008), Haberman et al. (2009), and Sinharay (2010), which returns:\cr
-#' 	(1) Original Observed subscore; \cr
+#' Haberman (2008), Puhan, Sinharay, Haberman, and Larkin(2008), and Sinharay (2010), which returns:\cr
+#' 	(1) Original observed subscore; \cr
 #' 	(2) The true subscore is estimated based on the observed subscore;\cr
 #' @param test.data A list that contains datasets of all subtests and the whole test,
 #'                  which can be obtained using function 'data.prep'.
@@ -36,7 +36,7 @@ CTTsub.RegOnSub<-function (test.data) {
   names(subscore.list) <- mylist.names
   
   for (t in 1 : (n.tests))  {
-    subscore.list[[t]]<- rowSums(test.data[[t]])
+    subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = TRUE)
   } 
   subscore.original.matrix<-do.call(cbind, subscore.list)
   
@@ -62,7 +62,7 @@ CTTsub.RegOnSub<-function (test.data) {
   
   mean<-rep(NA,n.tests)
   for (t in 1:n.tests) {
-    mean[t]<-mean(subscore.list[[t]])
+    mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
   }
   
   mylist.names <- c(paste ('RegOnSub.Score.',rep(1:n.subtests),sep=''))
