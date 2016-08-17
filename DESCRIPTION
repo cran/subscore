@@ -1,19 +1,20 @@
 Package: subscore
-Title: SubScore Computing Functions in Classical Test Theory
-Version: 1.2
+Title: Computing Subscores in Classical Test Theory
+Version: 1.3
 Authors@R: c(person("Shenghai", "Dai", role = c("aut", "cre"), 
                      email = "dais@indiana.edu"),
              person("Xiaolin", "Wang", role = "aut"),
              person("Dubravka", "Svetina", role = "aut"))
 Author: Shenghai Dai [aut, cre],
-        Xiaolin Wang [aut],
-        Dubravka Svetina [aut]
+    Xiaolin Wang [aut],
+    Dubravka Svetina [aut]
 Maintainer: Shenghai Dai <dais@indiana.edu>
-Description: Functions that compute sub-scores for a test using different methods in classical test theory (CTT).
-Depends: R (>= 3.1.0), CTT, stats
+Description: Functions for computing test subscores using methods applicable to classical test theory (CTT) scores. This package enables two sets of subscoring methods within the framework of CTT: (1) Wainer's augmentation method, and (2) Haberman's three subscoring methods. The package also includes the function to compute Proportional Reduction of Mean Squared Errors (PRMSEs) proposed by Haberman's, which are used to examine whether test subscores are of added value.
+Depends: R (>= 3.2.5), CTT, stats
 NeedsCompilation: no
 LazyData: true
 License: GPL (>= 2)
-Packaged: 2015-11-20 17:13:25 UTC; Kevin_DSH
+RoxygenNote: 5.0.1
+Packaged: 2016-08-17 03:13:11 UTC; Kevin_DSH
 Repository: CRAN
-Date/Publication: 2015-11-21 15:56:33
+Date/Publication: 2016-08-17 10:40:33

@@ -1,14 +1,14 @@
-#' This function prepares the data that can be used by other functions 
-#' @description This function generates a list of datasets based on the scored original dataset, 
+#' This function prepares data into a requried list format 
+#' @description This function generates a list of datasets using the scored original dataset, 
 #' which can be used as objects in subscore computing functions.
-#' @param scored.data A dataset that contains scored responses only.
+#' @param scored.data Original scored dataset with rows as individuals and columns as items.
 #' @param subtest.infor A numerical vector. The first number indicates the number of subtests,
-#'                       followed by the number o items of each subtest.
-#' @return A list that contains datasets of all subtests and the whole test. 
+#'                       followed by numbers o items on each subscale.
+#' @return A list that contains subscale responses and the total test response. 
 #' @examples 
 #'         subtest.infor<-c(3,15,15,20) 
 #'         # This test consists of 3 subtests, which have 15, 15 and 20 items respectively.
-#'         test.datalist<-data.prep(scored.data,subtest.infor)
+#'         test.data<-data.prep(scored.data,subtest.infor)
 #' @export
 
 data.prep<-function (scored.data, subtest.infor) {

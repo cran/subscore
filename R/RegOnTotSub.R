@@ -1,56 +1,61 @@
-#' This function Computes subscores based on both the observed subscore and the observed total in classical test theory (CTT)
-#' score
-#' @description This function computes CTT subscores based on both the observed subscore and the observed total
-#' score, using the method introduced in Haberman (2008), Puhan, Sinharay, Haberman, and Larkin(2008), and Sinharay (2010), which return:\cr
-#' 	(1) Original observed subscore; \cr
-#' 	(2) The true subscore is estimated based on 
-#' 	    both the observed subscore and the observed  total score.\cr
-#' @param test.data A list that contains datasets of all subtests and the whole test,
-#'                  which can be obtained using function 'data.prep'.
-#' @return A list of objects that include both test information and subscores. \cr
-#'         (1) "subscore.information" - It contains test information of both subtests
-#'                                      and the total test, such as mean of subscores and total score, reliability, and PRMSE.\cr
-#'         (2) "subscore.original" - It contains original subscores and total score. \cr
-#'         (3) "subscore.RegOnTotSub" - It contains subscores that are estimated based on both the observed subscore and the
-#'                                      observed total score. 
+#' Computing subscores using Haberman's method based on both observed total scores and observed subscores.
+#' @description This function estimate true subscores based on both observed stotal scores and observed 
+#' subscores using the method introduced by Haberman (2008).
+#' @param test.data A list that contains subscale responses and the total test responses. It 
+#' can be obtained using the function 'data.prep'.
+#' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
+#' \item{PRMSE}{PRMSEs of obtained subscores (for Haberman's methods only).}
+#' \item{subscore.original}{Original observed subscores and total score.} 
+#' \item{subscore.RegOnTotSub}{Subscores that are estimated based on both the observed total score and observed subscore.}
 #' @import CTT
 #' @import stats
 #' @examples 
-#'         CTTsub.RegOnSub(test.data)
+#'        test.data<-data.prep(scored.data,c(3,15,15,20))
+#'        
+#'        RegOnTotSub(test.data) 
+#'        
+#'        RegOnTotSub(test.data)$summary
+#'        RegOnTotSub(test.data)$PRMSE
+#'        RegOnTotSub(test.data)$subscore.RegOnTotSub
 #' @export
+#' @references {
+#' Haberman, S. J. (2008). 
+#' "When can subscores have value?."
+#'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+#' }
 
-CTTsub.RegOnTotSub<-function (test.data) {
+RegOnTotSub<-function (test.data) {
   
   n.tests<-length(test.data)
   n.subtests<-n.tests-1
   n.items<-rep(NA,n.tests)
   n.cases<-rep(NA,n.tests)
-
+  
   for (t in 1:n.tests) {
     n.items[t]<-dim(test.data[[t]])[2] 
-    n.cases[t]<-dim(test.data[[t]])[1]  
-    } 
-  
+    n.cases[t]<-dim(test.data[[t]])[1] 
+  } 
   n.items.total<-n.items[n.tests]
   reliability.alpha<-rep(NA, (n.tests))  
-  mylist.names <- c(paste ('Subscore.',rep(1:n.subtests),sep=''),'Score.Total')
+  
+  mylist.names <- c(paste ('Original.Subscore.',rep(1:n.subtests),sep=''),'Total.Score')
   subscore.list <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list) <- mylist.names
-  
   for (t in 1 : (n.tests))  {
-    subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = TRUE)
-  } 
+    subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = T)
+  }  
+  
   subscore.original.matrix<-do.call(cbind, subscore.list) 
   
   for (r in 1:(n.tests)) {
     reliability.alpha[r]<-reliability(test.data[[r]],itemal=TRUE,NA.Delete=T)[[3]]
   } 
- 
-  sigma.obs<-rep(NA,n.tests)
   
+  sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
+  
   var.obs<-sigma.obs^2
   corr<-cor(subscore.original.matrix)
   CovMat.Obs<-cov(subscore.original.matrix)
@@ -62,22 +67,24 @@ CTTsub.RegOnTotSub<-function (test.data) {
   }
   
   mean<-rep(NA,n.tests)
+  SD<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
+    SD[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
+  r.StXt<-rep(NA,n.tests)
   
   cov.rowsum<-rowSums(CovMat.true[,1:n.subtests],na.rm = TRUE)
   
-  r.StXt<-rep(NA,n.tests)
-  for (t in 1:(n.tests-1)) {     
+  for (t in 1:n.subtests) {    
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])
   } 
-  
+ 
   tao<-rep(NA,n.tests)
   beta<-rep(NA,n.tests)
   gamma<-rep(NA,n.tests)
-
+  
   for (t in 1:n.tests) {
     tao[t]<-(sqrt(reliability.alpha[n.tests])*sqrt(r.StXt[t])-corr[t,n.tests]*sqrt(reliability.alpha[t]))/(1-corr[t,n.tests]^2)
     beta[t]<- sqrt(reliability.alpha[t])*(sqrt(reliability.alpha[t])-corr[t,n.tests]*tao[t])
@@ -85,12 +92,11 @@ CTTsub.RegOnTotSub<-function (test.data) {
   } 
   
   PRMSE.RegOnTotSub<-rep(NA, n.tests)
-  
   for (t in 1:n.subtests) { 
     PRMSE.RegOnTotSub[t]<-reliability.alpha[t]+tao[t]^2*(1-corr[t,n.tests]^2)
   } 
-
-    mylist.names <- c(paste ('RegOnTotSub.Score.',rep(1:n.subtests),sep=''))
+  
+  mylist.names <- c(paste ('RegOnTotSub.Score.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnTotSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTotSub) <- mylist.names
   
@@ -98,16 +104,26 @@ CTTsub.RegOnTotSub<-function (test.data) {
     subscore.list.RegOnTotSub[[t]]<-mean[t]+beta[t]*(subscore.dataframe[,t]-mean[t])+gamma[t]*(subscore.dataframe[,n.tests]-mean[n.tests])
   } 
   
-  subscore.information.list<-list(mean=mean, reliability=reliability.alpha, 
-                                  PRMSE.RegOnTotSub=PRMSE.RegOnTotSub)
+  subscore.information.list<-list(Original.reliability=reliability.alpha,PRMSE.RegOnTotSub=PRMSE.RegOnTotSub)
   subscore.information<-do.call(cbind,subscore.information.list)
-  rownames.list<-c(paste('Subtest.',rep(1:n.subtests),sep=''),'Total.test')
+  
+  rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
   rownames(subscore.information)<-rownames.list
+  
   subscore.original<-do.call(cbind,subscore.list)
   subscore.RegOnTotSub<-do.call(cbind,subscore.list.RegOnTotSub)
-  subscores<-list(subscore.original=subscore.original, subscore.RegOnTotSub=subscore.RegOnTotSub)
   
-  return (list(subscore.information=subscore.information, 
+  Orig.mean<-mean[1:n.subtests]
+  Orig.sd<-SD[1:n.subtests]
+  RegOnTotSub.mean<-colMeans(subscore.RegOnTotSub,na.rm=T)
+  RegOnTotSub.sd<-apply(subscore.RegOnTotSub, 2, sd,na.rm=T)
+  
+  summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,RegOnTotSub.mean=RegOnTotSub.mean,
+                     RegOnTotSub.sd=RegOnTotSub.sd)
+  summary<-do.call(cbind,summary.list)
+  rownames(summary)<-rownames.list[1:n.subtests]
+  
+  return (list(summary=summary,
+               PRMSE=subscore.information, 
                subscore.original=subscore.original,
-               subscore.RegOnTotSub=subscore.RegOnTotSub))
-} 
+               subscore.RegOnTotSub=subscore.RegOnTotSub))  } 
