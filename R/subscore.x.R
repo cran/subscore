@@ -6,17 +6,17 @@
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
 #' \item{PRMSE}{PRMSEs of obtained subscores (for Haberman's methods only).}
 #' \item{subscore.original}{Original observed subscores and total score.} 
-#' \item{subscore.RegOnTot}{Subscores that are estimated based on the observed total score.}
+#' \item{subscore.x}{Subscores that are estimated based on the observed total score.}
 #' @import CTT
 #' @import stats
 #' @examples 
 #'        test.data<-data.prep(scored.data,c(3,15,15,20))
 #'        
-#'        RegOnTot(test.data) 
+#'        subscore.x(test.data) 
 #'        
-#'        RegOnTot(test.data)$summary
-#'        RegOnTot(test.data)$PRMSE
-#'        RegOnTot(test.data)$subscore.RegOnTot
+#'        subscore.x(test.data)$summary
+#'        subscore.x(test.data)$PRMSE
+#'        subscore.x(test.data)$subscore.x
 #' @export
 #' @references {
 #' Haberman, S. J. (2008). 
@@ -25,7 +25,7 @@
 #' }
 
 
-RegOnTot<-function (test.data) {
+subscore.x<-function (test.data) {
   
   n.tests<-length(test.data)
   n.subtests<-n.tests-1
@@ -75,43 +75,43 @@ RegOnTot<-function (test.data) {
   }
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
   
-  PRMSE.RegOnTot<-rep(NA,n.tests)
+  PRMSE.x<-rep(NA,n.tests)
   r.StXt<-rep(NA,n.tests)
   
   cov.rowsum<-rowSums(CovMat.true[,1:n.subtests],na.rm = TRUE)
   
   for (t in 1:n.subtests) {    
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])
-    PRMSE.RegOnTot[t]<-r.StXt[t]*reliability.alpha[n.tests]
+    PRMSE.x[t]<-r.StXt[t]*reliability.alpha[n.tests]
   } 
-  mylist.names <- c(paste ('RegOnTot.Score.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste ('Subscore.x.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnTot <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTot) <- mylist.names
   
   for (t in 1:n.subtests) { 
-    subscore.list.RegOnTot[[t]]<-mean[t]+sqrt(PRMSE.RegOnTot[t])*(sigma.true[t]/(sigma.obs[n.tests])*(subscore.dataframe[,n.tests]-mean[n.tests]))
+    subscore.list.RegOnTot[[t]]<-mean[t]+sqrt(PRMSE.x[t])*(sigma.true[t]/(sigma.obs[n.tests])*(subscore.dataframe[,n.tests]-mean[n.tests]))
   } 
   
-  subscore.information.list<-list(Original.reliability=reliability.alpha,PRMSE.RegOnTot=PRMSE.RegOnTot)
+  subscore.information.list<-list(Original.reliability=reliability.alpha,PRMSE.x=PRMSE.x)
   subscore.information<-do.call(cbind,subscore.information.list)
   
   rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
   rownames(subscore.information)<-rownames.list
   
   subscore.original<-do.call(cbind,subscore.list)
-  subscore.RegOnTot<-do.call(cbind,subscore.list.RegOnTot)
+  subscore.x<-do.call(cbind,subscore.list.RegOnTot)
 
   Orig.mean<-mean[1:n.subtests]
   Orig.sd<-SD[1:n.subtests]
-  RegOnTot.mean<-colMeans(subscore.RegOnTot,na.rm=T)
-  RegOnTot.sd<-apply(subscore.RegOnTot, 2, sd,na.rm=T)
+  subscore.x.mean<-colMeans(subscore.x,na.rm=T)
+  subscore.x.sd<-apply(subscore.x, 2, sd,na.rm=T)
 
   summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,
-                     RegOnTot.mean=RegOnTot.mean,RegOnTot.sd=RegOnTot.sd)
+                     subscore.x.mean=subscore.x.mean,subscore.x.sd=subscore.x.sd)
   summary<-do.call(cbind,summary.list)
   rownames(summary)<-rownames.list[1:n.subtests]
   
   return (list(summary=summary,
                PRMSE=subscore.information, 
                subscore.original=subscore.original,
-               subscore.RegOnTot=subscore.RegOnTot))  } 
+               subscore.x=subscore.x))  } 

@@ -1,12 +1,14 @@
 #' This main function estimates true subscores using different methods based on original CTT scores.
-#' @description This function estimates true subscores using methods introduced in Haberman (2008) and Wainer et al. (2001).
-#' @param test.data A list that contains item responses of all subtests and the total test, which can be obtained using function "data.prep".
+#' @description This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001).
+#' @param test.data A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.
 #' @param  method Subscore estimation methods. method="Haberman" (by default) represents the three methods propose by Harberman (2008). 
 #' method="Wainer" represents Wainer's augmented method.         
 #' @return \item{summary}{Summary of estimated subscores (e.g., mean, sd).}
-#' \item{PRMSE}{PRMSEs of estimated subscores (for Haberman's methods only).}
+#' \item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
+#' value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
+#' vice versa.}
 #' \item{subscore.original}{Original subscores and total score.}
-#' \item{estimated.subscores}{Subscores computed using selected methods. Three sets of subscores will be returned if method = "Haberman".}
+#' \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 #' @import CTT
 #' @import stats
 #' @examples
@@ -27,14 +29,14 @@
 #' CTTsub(test.data,method="Haberman")$subscore.original  
 #' 
 #' # Obtaining subscores that are estimated as a function of the observed subscores 
-#' CTTsub(test.data,method="Haberman")$subscore.RegOnSub 
+#' CTTsub(test.data,method="Haberman")$subscore.s 
 #' 
 #' # Obtaining subscores that are estimated as a function of the observed total score 
-#' CTTsub(test.data,method="Haberman")$subscore.RegOnTot  
+#' CTTsub(test.data,method="Haberman")$subscore.x  
 #' 
 #' # Obtaining subscores that are estimated as a function of 
 #' # both the observed subscores and the observed total score.
-#' CTTsub(test.data,method="Haberman")$subscore.RegOnTotSub  
+#' CTTsub(test.data,method="Haberman")$subscore.sx  
 #' 
 #' #-------------------------------------------      
 #' # Estimating subscores using Wainer's method
@@ -109,31 +111,31 @@ CTTsub<-function (test.data, method="Haberman") {
     mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
     SD[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
-  mylist.names <- c(paste ('RegOnSub.Score.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste ('Subscore.s.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnSub) <- mylist.names
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
   for (t in 1: n.subtests) {
     subscore.list.RegOnSub[[t]]<-mean[t]+reliability.alpha[t]*(subscore.dataframe[,t]-mean[t])
   } 
-  PRMSE.RegOnSub<-rep(NA,n.tests)
-  PRMSE.RegOnSub[1:n.subtests]<-reliability.alpha[1:n.subtests]
+  PRMSE.s<-rep(NA,n.tests)
+  PRMSE.s[1:n.subtests]<-reliability.alpha[1:n.subtests]
 
-  PRMSE.RegOnTot<-rep(NA,n.tests)
+  PRMSE.x<-rep(NA,n.tests)
   r.StXt<-rep(NA,n.tests)
   
   cov.rowsum<-rowSums(CovMat.true[,1:n.subtests],na.rm = TRUE)
 
   for (t in 1:n.subtests) {    
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])
-    PRMSE.RegOnTot[t]<-r.StXt[t]*reliability.alpha[n.tests]
+    PRMSE.x[t]<-r.StXt[t]*reliability.alpha[n.tests]
   } 
-  mylist.names <- c(paste ('RegOnTot.Score.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste ('Subscore.x.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnTot <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTot) <- mylist.names
   
   for (t in 1:n.subtests) { 
-    subscore.list.RegOnTot[[t]]<-mean[t]+sqrt(PRMSE.RegOnTot[t])*(sigma.true[t]/(sigma.obs[n.tests])*(subscore.dataframe[,n.tests]-mean[n.tests]))
+    subscore.list.RegOnTot[[t]]<-mean[t]+sqrt(PRMSE.x[t])*(sigma.true[t]/(sigma.obs[n.tests])*(subscore.dataframe[,n.tests]-mean[n.tests]))
     } 
   
   tao<-rep(NA,n.tests)
@@ -146,12 +148,12 @@ CTTsub<-function (test.data, method="Haberman") {
     gamma[t]<-sqrt(reliability.alpha[t])*tao[t]*(sigma.obs[t]/sigma.obs[n.tests])
   } 
  
-  PRMSE.RegOnTotSub<-rep(NA, n.tests)
+  PRMSE.sx<-rep(NA, n.tests)
   for (t in 1:n.subtests) { 
-    PRMSE.RegOnTotSub[t]<-reliability.alpha[t]+tao[t]^2*(1-corr[t,n.tests]^2)
+    PRMSE.sx[t]<-reliability.alpha[t]+tao[t]^2*(1-corr[t,n.tests]^2)
   } 
 
-  mylist.names <- c(paste ('RegOnTotSub.Score.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste ('Subscore.sx.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnTotSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTotSub) <- mylist.names
 
@@ -159,39 +161,43 @@ CTTsub<-function (test.data, method="Haberman") {
     subscore.list.RegOnTotSub[[t]]<-mean[t]+beta[t]*(subscore.dataframe[,t]-mean[t])+gamma[t]*(subscore.dataframe[,n.tests]-mean[n.tests])
   } 
   
+  added.value.s<-PRMSE.s>PRMSE.x
+  added.value.sx<-(PRMSE.sx-pmax(PRMSE.s,PRMSE.x))>(.1*(1-pmax(PRMSE.s,PRMSE.x)))
   subscore.information.list<-list(Original.reliability=reliability.alpha, 
-                                  PRMSE.RegOnSub=PRMSE.RegOnSub, PRMSE.RegOnTot=PRMSE.RegOnTot, PRMSE.RegOnTotSub=PRMSE.RegOnTotSub)
+                                  PRMSE.s=PRMSE.s, PRMSE.x=PRMSE.x, PRMSE.sx=PRMSE.sx,
+                                  added.value.s=added.value.s,added.value.sx=added.value.sx)
   subscore.information<-do.call(cbind,subscore.information.list)
   
   rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
   rownames(subscore.information)<-rownames.list
 
   subscore.original<-do.call(cbind,subscore.list)
-  subscore.RegOnSub<-do.call(cbind,subscore.list.RegOnSub)
-  subscore.RegOnTot<-do.call(cbind,subscore.list.RegOnTot)
-  subscore.RegOnTotSub<-do.call(cbind,subscore.list.RegOnTotSub)
+  subscore.s<-do.call(cbind,subscore.list.RegOnSub)
+  subscore.x<-do.call(cbind,subscore.list.RegOnTot)
+  subscore.sx<-do.call(cbind,subscore.list.RegOnTotSub)
   
   Orig.mean<-mean[1:n.subtests]
   Orig.sd<-SD[1:n.subtests]
-  RegOnSub.mean<-colMeans(subscore.RegOnSub,na.rm=T)
-  RegOnTot.mean<-colMeans(subscore.RegOnTot,na.rm=T)
-  RegOnTotSub.mean<-colMeans(subscore.RegOnTotSub,na.rm=T)
-  RegOnSub.sd<-apply(subscore.RegOnSub, 2, sd,na.rm=T)
-  RegOnTot.sd<-apply(subscore.RegOnTot, 2, sd,na.rm=T)
-  RegOnTotSub.sd<-apply(subscore.RegOnTotSub, 2, sd,na.rm=T)
+  subscore.s.mean<-colMeans(subscore.s,na.rm=T)
+  subscore.x.mean<-colMeans(subscore.x,na.rm=T)
+  subscore.sx.mean<-colMeans(subscore.sx,na.rm=T)
+  subscore.s.sd<-apply(subscore.s, 2, sd,na.rm=T)
+  subscore.x.sd<-apply(subscore.x, 2, sd,na.rm=T)
+  subscore.sx.sd<-apply(subscore.sx, 2, sd,na.rm=T)
   
-  summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,RegOnSub.mean=RegOnSub.mean,RegOnSub.sd=RegOnSub.sd,
-                     RegOnTot.mean=RegOnTot.mean,RegOnTot.sd=RegOnTot.sd,RegOnTotSub.mean=RegOnTotSub.mean,
-                     RegOnTotSub.sd=RegOnTotSub.sd)
+  summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,subscore.s.mean=subscore.s.mean,subscore.s.sd=subscore.s.sd,
+                     subscore.x.mean=subscore.x.mean,subscore.x.sd=subscore.x.sd,subscore.sx.mean=subscore.sx.mean,
+                     subscore.sx.sd=subscore.sx.sd)
   summary<-do.call(cbind,summary.list)
   rownames(summary)<-rownames.list[1:n.subtests]
   
   return (list(summary=summary,
                PRMSE=subscore.information, 
                subscore.original=subscore.original,
-               subscore.RegOnSub=subscore.RegOnSub,
-               subscore.RegOnTot=subscore.RegOnTot,
-               subscore.RegOnTotSub=subscore.RegOnTotSub)) }
+               subscore.s=subscore.s,
+               subscore.x=subscore.x,
+               subscore.sx=subscore.sx)) }
+  
   else if (method=="Wainer") {
     n.j <- length(test.data)-1
     n.i <- nrow(test.data$total.test)

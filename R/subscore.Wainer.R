@@ -14,10 +14,10 @@
 #' @examples  
 #'        test.data<-data.prep(scored.data,c(3,15,15,20))
 #'         
-#'         Wainer.score(test.data)
+#'         subscore.Wainer(test.data)
 #'         
-#'         Wainer.score(test.data)$summary
-#'         Wainer.score(test.data)$subscore.augmented
+#'         subscore.Wainer(test.data)$summary
+#'         subscore.Wainer(test.data)$subscore.augmented
 #' @export
 #' @references {
 #' Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
@@ -25,7 +25,7 @@
 #'  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
 #' }
 
-Wainer.score <- function(test.data) {
+subscore.Wainer <- function(test.data) {
   n.j <- length(test.data)-1
   n.i <- nrow(test.data$total.test)
   x <- matrix(NA, n.i, n.j)

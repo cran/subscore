@@ -6,7 +6,7 @@
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
 #' \item{PRMSE}{PRMSEs of obtained subscores (for Haberman's methods only).}
 #' \item{subscore.original}{Original subscores and total score.}
-#' \item{subscore.RegOnSub}{Subscores that are estimated based on the observed subscore.}
+#' \item{subscore.s}{Subscores that are estimated based on the observed subscore.}
 #' @import CTT
 #' @import stats
 #' @examples 
@@ -14,11 +14,11 @@
 #' test.data<-data.prep(scored.data,c(3,15,15,20))
 #'   
 #' #Estimate true subscores using Hamerman's method based on observed subscores     
-#' RegOnSub(test.data) 
+#' subscore.s(test.data) 
 #'        
-#' RegOnSub(test.data)$summary
-#' RegOnSub(test.data)$PRMSE
-#' RegOnSub(test.data)$subscore.RegOnSub
+#' subscore.s(test.data)$summary
+#' subscore.s(test.data)$PRMSE
+#' subscore.s(test.data)$subscore.s
 #' @export
 #' @references {
 #' Haberman, S. J. (2008). 
@@ -28,7 +28,7 @@
 
 
 
-RegOnSub<-function (test.data) {
+subscore.s<-function (test.data) {
   
   n.tests<-length(test.data)
   n.subtests<-n.tests-1
@@ -76,36 +76,36 @@ RegOnSub<-function (test.data) {
     mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
     SD[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
-  mylist.names <- c(paste ('RegOnSub.Score.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste ('Subscore.s.',rep(1:n.subtests),sep=''))
   subscore.list.RegOnSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnSub) <- mylist.names
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
   for (t in 1: n.subtests) {
     subscore.list.RegOnSub[[t]]<-mean[t]+reliability.alpha[t]*(subscore.dataframe[,t]-mean[t])
   } 
-  PRMSE.RegOnSub<-rep(NA,n.tests)
-  PRMSE.RegOnSub[1:n.subtests]<-reliability.alpha[1:n.subtests]
+  PRMSE.s<-rep(NA,n.tests)
+  PRMSE.s[1:n.subtests]<-reliability.alpha[1:n.subtests]
   
   subscore.information.list<-list(Original.reliability=reliability.alpha, 
-                                  PRMSE.RegOnSub=PRMSE.RegOnSub)
+                                  PRMSE.s=PRMSE.s)
   subscore.information<-do.call(cbind,subscore.information.list)
   
   rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
   rownames(subscore.information)<-rownames.list
   
   subscore.original<-do.call(cbind,subscore.list)
-  subscore.RegOnSub<-do.call(cbind,subscore.list.RegOnSub)
+  subscore.s<-do.call(cbind,subscore.list.RegOnSub)
   
   Orig.mean<-mean[1:n.subtests]
   Orig.sd<-SD[1:n.subtests]
-  RegOnSub.mean<-colMeans(subscore.RegOnSub,na.rm=T)
-  RegOnSub.sd<-apply(subscore.RegOnSub, 2, sd,na.rm=T)
+  subscore.s.mean<-colMeans(subscore.s,na.rm=T)
+  subscore.s.sd<-apply(subscore.s, 2, sd,na.rm=T)
  
-  summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,RegOnSub.mean=RegOnSub.mean,RegOnSub.sd=RegOnSub.sd)
+  summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,subscore.s.mean=subscore.s.mean,subscore.s.sd=subscore.s.sd)
   summary<-do.call(cbind,summary.list)
   rownames(summary)<-rownames.list[1:n.subtests]
   
   return (list(summary=summary,
                PRMSE=subscore.information, 
                subscore.original=subscore.original,
-               subscore.RegOnSub=subscore.RegOnSub))  } 
+               subscore.s=subscore.s))  } 

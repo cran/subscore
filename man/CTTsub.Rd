@@ -7,19 +7,21 @@
 CTTsub(test.data, method = "Haberman")
 }
 \arguments{
-\item{test.data}{A list that contains item responses of all subtests and the total test, which can be obtained using function "data.prep".}
+\item{test.data}{A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.}
 
 \item{method}{Subscore estimation methods. method="Haberman" (by default) represents the three methods propose by Harberman (2008). 
 method="Wainer" represents Wainer's augmented method.}
 }
 \value{
 \item{summary}{Summary of estimated subscores (e.g., mean, sd).}
-\item{PRMSE}{PRMSEs of estimated subscores (for Haberman's methods only).}
+\item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
+value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
+vice versa.}
 \item{subscore.original}{Original subscores and total score.}
-\item{estimated.subscores}{Subscores computed using selected methods. Three sets of subscores will be returned if method = "Haberman".}
+\item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 }
 \description{
-This function estimates true subscores using methods introduced in Haberman (2008) and Wainer et al. (2001).
+This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001).
 }
 \examples{
 # Transfering original scored data to a list format
@@ -39,14 +41,14 @@ CTTsub(test.data,method="Haberman")$summary
 CTTsub(test.data,method="Haberman")$subscore.original  
 
 # Obtaining subscores that are estimated as a function of the observed subscores 
-CTTsub(test.data,method="Haberman")$subscore.RegOnSub 
+CTTsub(test.data,method="Haberman")$subscore.s 
 
 # Obtaining subscores that are estimated as a function of the observed total score 
-CTTsub(test.data,method="Haberman")$subscore.RegOnTot  
+CTTsub(test.data,method="Haberman")$subscore.x  
 
 # Obtaining subscores that are estimated as a function of 
 # both the observed subscores and the observed total score.
-CTTsub(test.data,method="Haberman")$subscore.RegOnTotSub  
+CTTsub(test.data,method="Haberman")$subscore.sx  
 
 #-------------------------------------------      
 # Estimating subscores using Wainer's method
