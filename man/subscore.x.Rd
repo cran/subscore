@@ -21,12 +21,15 @@ This function estimates true subscores based on observed total scores
 using the method introduced by Haberman (2008).
 }
 \examples{
-       test.data<-data.prep(scored.data,c(3,15,15,20))
+       test.data<-data.prep(scored.data,c(3,15,15,20), 
+                            c("Algebra","Geometry","Measurement", "Math"))
        
        subscore.x(test.data) 
        
        subscore.x(test.data)$summary
        subscore.x(test.data)$PRMSE
+       subscore.x(test.data)$Correlation
+       subscore.x(test.data)$Disattenuated.correlation
        subscore.x(test.data)$subscore.x
 }
 \references{
@@ -36,4 +39,3 @@ Haberman, S. J. (2008).
  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
 }
 }
-

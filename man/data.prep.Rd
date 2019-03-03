@@ -4,13 +4,16 @@
 \alias{data.prep}
 \title{This function prepares data into a requried list format}
 \usage{
-data.prep(scored.data, subtest.infor)
+data.prep(scored.data, subtest.infor, subtest.names = NULL)
 }
 \arguments{
 \item{scored.data}{Original scored dataset with rows as individuals and columns as items.}
 
 \item{subtest.infor}{A numerical vector. The first number indicates the number of subtests,
 followed by numbers o items on each subscale.}
+
+\item{subtest.names}{Names of the subscales AND the total test. The default is NULL. If not provided, names of 
+"subtest.1, subtest.2, etc." will be assigned.}
 }
 \value{
 A list that contains subscale responses and the total test response.
@@ -21,7 +24,8 @@ which can be used as objects in subscore computing functions.
 }
 \examples{
         subtest.infor<-c(3,15,15,20) 
-        # This test consists of 3 subtests, which have 15, 15 and 20 items respectively.
-        test.data<-data.prep(scored.data,subtest.infor)
+        subtest.names<-c("Algebra","Geometry","Measurement", "Math")
+        # This math test consists of 3 subtests, which have 15 algebra 
+        #items, 15 geometry items, and 20 measurement items.
+        test.data<-data.prep(scored.data,subtest.infor,subtest.names)
 }
-

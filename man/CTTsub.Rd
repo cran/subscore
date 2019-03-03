@@ -21,15 +21,24 @@ vice versa.}
 \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 }
 \description{
-This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001).
+This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001). 
+Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
+whether a subscore or an argumented subscore has added value. Codes of the statistical hypothesis tests are from Sinharay (2019).
 }
 \examples{
 # Transfering original scored data to a list format
 # that can be used in other functions.
-test.data<-data.prep(scored.data,c(3,15,15,20))
+test.data<-data.prep(scored.data,c(3,15,15,20),
+                     c("Algebra","Geometry","Measurement", "Math"))
 #----------------------------------------------
 # Estimating subscores using Haberman's methods       
 CTTsub(test.data,method="Haberman") # Estimating subscores using Haberman's methods 
+
+# Obtaining original correlation for the three methods
+CTTsub(test.data,method="Haberman")$Correlation  
+
+# Obtaining disattenuated correlation for the three methods
+CTTsub(test.data,method="Haberman")$Disattenuated.correlation  
 
 # Obtaining PRMSEs for the three methods
 CTTsub(test.data,method="Haberman")$PRMSE  
@@ -72,9 +81,14 @@ Haberman, S. J. (2008).
 }
 
 {
+Sinharay, S. (2019). 
+"Added Value of Subscores and Hypothesis Testing."
+ Journal of Educational and Behavioral Statistics, 44(1), 25-44. 
+}
+
+{
 Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
-"Augmented scores - "Borrowing strength" to compute scores based on small numbers of items"
+"Augmented scores - "Borrowing strength" to compute scores based on small numbers of items."
  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
 }
 }
-

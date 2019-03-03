@@ -1,5 +1,7 @@
 #' This main function estimates true subscores using different methods based on original CTT scores.
-#' @description This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001).
+#' @description This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001). 
+#' Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
+#' whether a subscore or an argumented subscore has added value. Codes of the statistical hypothesis tests are from Sinharay (2019).
 #' @param test.data A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.
 #' @param  method Subscore estimation methods. method="Haberman" (by default) represents the three methods propose by Harberman (2008). 
 #' method="Wainer" represents Wainer's augmented method.         
@@ -11,13 +13,22 @@
 #' \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 #' @import CTT
 #' @import stats
+#' @import sirt
+#' @import cocor
 #' @examples
 #' # Transfering original scored data to a list format
 #' # that can be used in other functions.
-#' test.data<-data.prep(scored.data,c(3,15,15,20))
+#' test.data<-data.prep(scored.data,c(3,15,15,20),
+#'                      c("Algebra","Geometry","Measurement", "Math"))
 #' #----------------------------------------------
 #' # Estimating subscores using Haberman's methods       
 #' CTTsub(test.data,method="Haberman") # Estimating subscores using Haberman's methods 
+#' 
+#' # Obtaining original correlation for the three methods
+#' CTTsub(test.data,method="Haberman")$Correlation  
+#' 
+#' # Obtaining disattenuated correlation for the three methods
+#' CTTsub(test.data,method="Haberman")$Disattenuated.correlation  
 #' 
 #' # Obtaining PRMSEs for the three methods
 #' CTTsub(test.data,method="Haberman")$PRMSE  
@@ -58,8 +69,13 @@
 #'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
 #' }
 #' @references {
+#' Sinharay, S. (2019). 
+#' "Added Value of Subscores and Hypothesis Testing."
+#'  Journal of Educational and Behavioral Statistics, 44(1), 25-44. 
+#' }
+#' @references {
 #' Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
-#' "Augmented scores - "Borrowing strength" to compute scores based on small numbers of items"
+#' "Augmented scores - "Borrowing strength" to compute scores based on small numbers of items."
 #'  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
 #' }
 
@@ -77,7 +93,7 @@ CTTsub<-function (test.data, method="Haberman") {
   n.items.total<-n.items[n.tests]
   reliability.alpha<-rep(NA, (n.tests))  
   
-  mylist.names <- c(paste ('Original.Subscore.',rep(1:n.subtests),sep=''),'Total.Score')
+  mylist.names<-names(test.data)
   subscore.list <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list) <- mylist.names
   for (t in 1 : (n.tests))  {
@@ -85,18 +101,35 @@ CTTsub<-function (test.data, method="Haberman") {
   }  
   
   subscore.original.matrix<-do.call(cbind, subscore.list) 
+  corr<-cor(subscore.original.matrix)
+  itemstrata<-cbind(colnames(test.data[[n.tests]]),rep(1:(n.tests-1),lengths(test.data)[1:(n.tests-1)]))
+  quiet <- function(x) { 
+    sink(tempfile()) 
+    on.exit(sink()) 
+    invisible(force(x)) 
+  } 
+  str.alpha<-quiet(stratified.cronbach.alpha(test.data[[n.tests]], 
+                                             itemstrata=itemstrata)$alpha.stratified)
+  stratefied.alpha<-c(str.alpha[-1],str.alpha[1])
   
   for (r in 1:(n.tests)) {
-    reliability.alpha[r]<-reliability(test.data[[r]],itemal=TRUE,NA.Delete=T)[[3]]
+    reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
+  Reliabilities<-cbind(reliability.alpha, stratefied.alpha)
+  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)
 
+  if (sum(disattenuated.corr[upper.tri(disattenuated.corr)]>1)>1) {
+    warning ("There are disattenuated correlation values exceed 1. PRMSE values should be used with caution 
+             and the corresponding (augmented) subscore does not have added value.",
+             call. = FALSE)
+  }
+  
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
 
   var.obs<-sigma.obs^2
-  corr<-cor(subscore.original.matrix)
   CovMat.Obs<-cov(subscore.original.matrix)
   var.true<-var.obs*reliability.alpha
   sigma.true<-sqrt(var.true)
@@ -111,7 +144,7 @@ CTTsub<-function (test.data, method="Haberman") {
     mean[t]<-mean(subscore.list[[t]],na.rm = TRUE)
     SD[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
-  mylist.names <- c(paste ('Subscore.s.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste('Subscore.s.',rep(names(test.data)[-length(test.data)]),sep=''))
   subscore.list.RegOnSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnSub) <- mylist.names
   subscore.dataframe<-as.data.frame(subscore.original.matrix)
@@ -130,7 +163,7 @@ CTTsub<-function (test.data, method="Haberman") {
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])
     PRMSE.x[t]<-r.StXt[t]*reliability.alpha[n.tests]
   } 
-  mylist.names <- c(paste ('Subscore.x.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste('Subscore.x.',rep(names(test.data)[-length(test.data)]),sep=''))
   subscore.list.RegOnTot <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTot) <- mylist.names
   
@@ -153,7 +186,7 @@ CTTsub<-function (test.data, method="Haberman") {
     PRMSE.sx[t]<-reliability.alpha[t]+tao[t]^2*(1-corr[t,n.tests]^2)
   } 
 
-  mylist.names <- c(paste ('Subscore.sx.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste('Subscore.sx.',rep(names(test.data)[-length(test.data)]),sep=''))
   subscore.list.RegOnTotSub <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTotSub) <- mylist.names
 
@@ -163,12 +196,13 @@ CTTsub<-function (test.data, method="Haberman") {
   
   added.value.s<-PRMSE.s>PRMSE.x
   added.value.sx<-(PRMSE.sx-pmax(PRMSE.s,PRMSE.x))>(.1*(1-pmax(PRMSE.s,PRMSE.x)))
-  subscore.information.list<-list(Original.reliability=reliability.alpha, 
+
+  subscore.information.list<-list(Alpha=reliability.alpha, 
                                   PRMSE.s=PRMSE.s, PRMSE.x=PRMSE.x, PRMSE.sx=PRMSE.sx,
                                   added.value.s=added.value.s,added.value.sx=added.value.sx)
   subscore.information<-do.call(cbind,subscore.information.list)
   
-  rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
+  rownames.list<-c(paste('Subscore.',rep(names(test.data)[-length(test.data)]),sep=''),names(test.data)[length(test.data)])
   rownames(subscore.information)<-rownames.list
 
   subscore.original<-do.call(cbind,subscore.list)
@@ -191,7 +225,57 @@ CTTsub<-function (test.data, method="Haberman") {
   summary<-do.call(cbind,summary.list)
   rownames(summary)<-rownames.list[1:n.subtests]
   
+  #below code from Sinharay (2019)
+  # Compute PRMSEs suggested by Sinharay (2013) from Haberman's PRMSEs
+  PRs<-PRMSE.s[1:n.subtests]*PRMSE.s[1:n.subtests]
+  PRx<-PRMSE.x[1:n.subtests]*PRMSE.s[1:n.subtests]
+  PRsx<-PRMSE.sx[1:n.subtests]*PRMSE.s[1:n.subtests]
+  rsx<-cor(subscore.original)[1:n.subtests,(n.subtests+1)]
+  olk<-rep(0,n.subtests)
+  wil<-rep(0,n.subtests)
+  n<-n.cases[length(test.data)]
+  for (j in 1:n.subtests)
+    {olk[j]=cocor.dep.groups.overlap(sqrt(PRs[j]),sqrt(PRx[j]),
+                                     rsx[j],n)@olkin1967$statistic
+  wil[j]=cocor.dep.groups.overlap(sqrt(PRs[j]),
+                                  sqrt(PRx[j]),rsx[j],n)@williams1959$statistic}
+  
+  compsd<-function(r01,r02,r12,r012,ns,n) {
+    a2=2*(r02-r12*r01)/(1-r12*r12)
+    a1=-r12*a2
+    a3=2*(r12*r01*r01+r12*r02*r02-r01*r02*(1+r12^2))/((1-r12^2)**2)
+    V=matrix(0,3,3)
+    v11s=(1-r01^2)^2/n
+    v22s=(1-r02^2)^2/n
+    v33s=(1-r12^2)^2/n
+    z=rep(0,4)
+   for (j in 1:ns) {
+    V[1,2]=(0.5*(2*r12[j]-r01[j]*r02[j])*(1-r12[j]^2-r01[j]^2-r02[j]^2)+r12[j]^3)/n
+    V[2,3]=(0.5*(2*r01[j]-r12[j]*r02[j])*(1-r12[j]^2-r01[j]^2-r02[j]^2)+r01[j]^3)/n
+    V[1,3]=(0.5*(2*r02[j]-r12[j]*r01[j])*(1-r12[j]^2-r01[j]^2-r02[j]^2)+r02[j]^3)/n
+    V[1,1]=v11s[j]
+    V[2,2]=v22s[j]
+    V[3,3]=v33s[j]
+  for (i in 1:2) {for (k in (i+1):3){V[k,i]=V[i,k]}}
+    vec=c(a1[j],a2[j],a3[j])
+    SD=sqrt(t(vec)%*%V%*%vec)
+    z[j]=(r012[j]*r012[j]-r01[j]^2)/SD}
+  return(z)}
+  
+  zs<-compsd(sqrt(PRs),sqrt(PRx),rsx,sqrt(PRsx),n.subtests,n)
+  zx<-compsd(sqrt(PRx),sqrt(PRs),rsx,sqrt(PRsx),n.subtests,n)
+  hedgesolkin<-ifelse(PRs>PRx,zs,zx)
+  
+  subscore.information.list<-list(Alpha=reliability.alpha, 
+                                  PRMSE.s=PRMSE.s, PRMSE.x=PRMSE.x, PRMSE.sx=PRMSE.sx,
+                                  added.value.s=added.value.s,added.value.sx=added.value.sx,
+                                  Olkin.Z=c(olk,"NA"), Williams.t=c(wil,"NA"), 
+                                  Hedges.Olkin.Z=c(hedgesolkin,"NA"))
+  subscore.information<-do.call(cbind,subscore.information.list)
+  
   return (list(summary=summary,
+               Correlation=corr,
+               Disattenuated.correlation=disattenuated.corr, 
                PRMSE=subscore.information, 
                subscore.original=subscore.original,
                subscore.s=subscore.s,
@@ -200,14 +284,14 @@ CTTsub<-function (test.data, method="Haberman") {
   
   else if (method=="Wainer") {
     n.j <- length(test.data)-1
-    n.i <- nrow(test.data$total.test)
+    n.i <- nrow(test.data[[length(test.data)]])
     x <- matrix(NA, n.i, n.j)
     for (j in 1:n.j) {	
       x[, j] <- rowSums(test.data[[j]],na.rm = T)}
     x.bar <- colMeans(x,na.rm = T)
     rho <- c(NA, n.j)
     for (j in 1:n.j){
-      rho[j] <- reliability(test.data[[j]],NA.Delete=T)$alpha}
+      rho[j] <- itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
     S.obs <- cov(x,use="pairwise.complete.obs")
     S.true <- S.obs
     for (j in 1:n.j) {
@@ -221,14 +305,16 @@ CTTsub<-function (test.data, method="Haberman") {
     rho.aug <- c(NA, n.j)
     for (j in 1:n.j){
       rho.aug[j] <- A[j,j]/C[j,j]}
-    colnames(x.true)<-paste("subscore.",1:n.j,sep="")
+    colnames(x.true)<-c(paste('Wainer.',rep(names(test.data)[-length(test.data)]),sep=''))
     SD<-apply(x.true, 2, sd,na.rm=T)
     MEAN<-colMeans(x.true,na.rm=T)
     Aug.reliability<-rho.aug
-    summary.list<-list(mean=MEAN, sd=SD, original.reliability=rho,augmented.reliability=Aug.reliability)
+    summary.list<-list(mean=MEAN, SD=SD, Augmented.reliability=Aug.reliability)
     summary<-do.call(cbind,summary.list)
     Augmented.subscores<-x.true
-    mylist.names <- c(paste ('Original.Subscore.',rep(1:n.j),sep=''),'Total.Score')
+    mylist.names<-names(test.data)
+    rownames(summary)<-mylist.names[1:n.j]
+    colnames(Augmented.subscores)<-mylist.names[1:n.j]
     subscore.list <- as.list(rep(NA, length(mylist.names)))
     names(subscore.list) <- mylist.names
     for (t in 1 : (length(test.data)))  {
@@ -237,4 +323,4 @@ CTTsub<-function (test.data, method="Haberman") {
     subscore.original<-do.call(cbind, subscore.list) 
     return(list(summary=summary,subscore.original=subscore.original, subscore.augmented=Augmented.subscores))
   }
-} 
+}  

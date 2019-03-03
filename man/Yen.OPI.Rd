@@ -23,7 +23,8 @@ objective subscore estimate.
 }
 \examples{
  
-        test.data<-data.prep(scored.data,c(3,15,15,20))
+        test.data<-data.prep(scored.data,c(3,15,15,20),
+                             c("Algebra","Geometry","Measurement", "Math"))
         
         Yen.OPI(test.data)
         
@@ -48,4 +49,3 @@ Yen, W. M. (1987, June).
 Paper presented at annual meeting of the Psychometric Society, Montreal, Quebec, Canada.
 }
 }
-

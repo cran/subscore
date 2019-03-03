@@ -24,7 +24,8 @@ Kelly's formula (Kelly, 1947). For details of Wainer's augmentation subscoring m
 }
 \examples{
  
-       test.data<-data.prep(scored.data,c(3,15,15,20))
+       test.data<-data.prep(scored.data,c(3,15,15,20),
+                            c("Algebra","Geometry","Measurement", "Math"))
         
         subscore.Wainer(test.data)
         
@@ -38,4 +39,3 @@ Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K.
  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
 }
 }
-

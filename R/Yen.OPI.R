@@ -12,7 +12,8 @@
 #' @import stats
 #' @import irtoys
 #' @examples  
-#'         test.data<-data.prep(scored.data,c(3,15,15,20))
+#'         test.data<-data.prep(scored.data,c(3,15,15,20),
+#'                              c("Algebra","Geometry","Measurement", "Math"))
 #'         
 #'         Yen.OPI(test.data)
 #'         
@@ -41,7 +42,7 @@ item.prob <- function(a,b,c,theta){item.prob <- 1/(1+exp(-a*(theta-b)))
 p1 <- function(a,c,p){p1 <- a*(1-p)*(p-c)/(1-c)
 	return(p1)}
 
-K <- nrow(test.data$total.test)
+K <- nrow(test.data[[length(test.data)]])
 J <- length(test.data)-1
 n <-rep(NA,J)
 n.cases<-rep(NA,J)
@@ -51,8 +52,8 @@ for (t in 1:J) {
 } 
 n.total<-sum(n)
 
-item.par <- est(test.data$total.test, model="2PL", engine="ltm")$est
-th.eap <- eap(test.data$total.test, ip=item.par, qu=normal.qu())[,1]
+item.par <- est(test.data[[length(test.data)]], model="2PL", engine="ltm")$est
+th.eap <- eap(test.data[[length(test.data)]], ip=item.par, qu=normal.qu())[,1]
 th.eap <- matrix(th.eap,K,n.total,byrow=F)
 a.par <- item.par[,1]
 b.par <- item.par[,2]
@@ -101,13 +102,13 @@ for (j in 1:J){
 		} else {
    		OPI[k,j] = obs.sub[[j]][k]/n[j]	}}}
 
-colnames(OPI)<-paste("OPI.",1:J,sep="")
+colnames(OPI)<-c(paste('OPI.',rep(names(test.data)[-length(test.data)]),sep=''))
 SD<-apply(OPI, 2, sd,na.rm=T)
 MEAN<-colMeans(OPI,na.rm=T)
 summary.list<-list(mean=MEAN, SD=SD)
 summary<-do.call(cbind,summary.list)
 
-mylist.names <- c(paste ('Original.Subscore.',rep(1:J),sep=''),'Total.Score')
+mylist.names <- names(test.data)
 subscore.list <- as.list(rep(NA, length(mylist.names)))
 names(subscore.list) <- mylist.names
 for (t in 1 : (length(test.data)))  {

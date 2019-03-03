@@ -21,10 +21,12 @@ This function estimate true subscores based on both observed stotal scores and o
 subscores using the method introduced by Haberman (2008).
 }
 \examples{
-       test.data<-data.prep(scored.data,c(3,15,15,20))
+       test.data<-data.prep(scored.data,c(3,15,15,20),
+                            c("Algebra","Geometry","Measurement", "Math"))
        
        subscore.sx(test.data) 
-       
+       subscore.s(test.data)$Correlation
+       subscore.s(test.data)$Disattenuated.correlation
        subscore.sx(test.data)$summary
        subscore.sx(test.data)$PRMSE
        subscore.sx(test.data)$subscore.sx
@@ -36,4 +38,3 @@ Haberman, S. J. (2008).
  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
 }
 }
-

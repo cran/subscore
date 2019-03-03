@@ -10,12 +10,15 @@
 #' @import CTT
 #' @import stats
 #' @examples 
-#'        test.data<-data.prep(scored.data,c(3,15,15,20))
+#'        test.data<-data.prep(scored.data,c(3,15,15,20), 
+#'                             c("Algebra","Geometry","Measurement", "Math"))
 #'        
 #'        subscore.x(test.data) 
 #'        
 #'        subscore.x(test.data)$summary
 #'        subscore.x(test.data)$PRMSE
+#'        subscore.x(test.data)$Correlation
+#'        subscore.x(test.data)$Disattenuated.correlation
 #'        subscore.x(test.data)$subscore.x
 #' @export
 #' @references {
@@ -39,7 +42,7 @@ subscore.x<-function (test.data) {
   n.items.total<-n.items[n.tests]
   reliability.alpha<-rep(NA, (n.tests))  
   
-  mylist.names <- c(paste ('Original.Subscore.',rep(1:n.subtests),sep=''),'Total.Score')
+  mylist.names<-names(test.data)
   subscore.list <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list) <- mylist.names
   for (t in 1 : (n.tests))  {
@@ -47,18 +50,24 @@ subscore.x<-function (test.data) {
   }  
   
   subscore.original.matrix<-do.call(cbind, subscore.list) 
+  corr<-cor(subscore.original.matrix)
   
   for (r in 1:(n.tests)) {
-    reliability.alpha[r]<-reliability(test.data[[r]],itemal=TRUE,NA.Delete=T)[[3]]
+    reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
+  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)
   
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)
   }
   
+  if (sum(disattenuated.corr[upper.tri(disattenuated.corr)]>1)>1) {
+    warning ("There are disattenuated correlation values exceed 1. PRMSE values should be used with caution 
+             and the corresponding (augmented) subscore does not have added value.",
+             call. = FALSE)
+  }
   var.obs<-sigma.obs^2
-  corr<-cor(subscore.original.matrix)
   CovMat.Obs<-cov(subscore.original.matrix)
   var.true<-var.obs*reliability.alpha
   sigma.true<-sqrt(var.true)
@@ -84,7 +93,7 @@ subscore.x<-function (test.data) {
     r.StXt[t]<-cov.rowsum[t]^2/(var.true[t]*var.true[n.tests])
     PRMSE.x[t]<-r.StXt[t]*reliability.alpha[n.tests]
   } 
-  mylist.names <- c(paste ('Subscore.x.',rep(1:n.subtests),sep=''))
+  mylist.names <- c(paste('Subscore.x.',rep(names(test.data)[-length(test.data)]),sep=''))
   subscore.list.RegOnTot <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list.RegOnTot) <- mylist.names
   
@@ -95,7 +104,7 @@ subscore.x<-function (test.data) {
   subscore.information.list<-list(Original.reliability=reliability.alpha,PRMSE.x=PRMSE.x)
   subscore.information<-do.call(cbind,subscore.information.list)
   
-  rownames.list<-c(paste('Subscore.',rep(1:n.subtests),sep=''),'Total.test')
+  rownames.list<-c(paste('Subscore.',rep(names(test.data)[-length(test.data)]),sep=''),names(test.data)[length(test.data)])
   rownames(subscore.information)<-rownames.list
   
   subscore.original<-do.call(cbind,subscore.list)
@@ -112,6 +121,8 @@ subscore.x<-function (test.data) {
   rownames(summary)<-rownames.list[1:n.subtests]
   
   return (list(summary=summary,
+               Correlation=corr,
+               Disattenuated.correlation=disattenuated.corr, 
                PRMSE=subscore.information, 
                subscore.original=subscore.original,
                subscore.x=subscore.x))  } 

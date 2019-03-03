@@ -5,8 +5,7 @@
 Sample scored data
 }
 \description{
-This dataset contains responses of 150 examinees to three subscales. 
-These subscales consist of 15, 15, and 20 items respectively.
+This dataset contains responses of 150 examinees to three subscales (algebra, geometry, and measurement). These subscales consist of 15, 15, and 20 items respectively.
 }
 \usage{data("scored.data")}
 \format{
@@ -64,11 +63,10 @@ These subscales consist of 15, 15, and 20 items respectively.
     \item{\code{V50}}{Item 50}  }
 }
 \details{
-A dataset containing responses of 150 examinees to a total number of 50 items on three subscales (15, 15, 20 items respectively).
+A dataset containing responses of 150 examinees to a total number of 50 math items on three subscales: 15 algebra items, 15 geometry, and 20 measurement items.
 }
 \examples{
 #read data
 data(scored.data)
-## maybe str(scored.data) ; plot(scored.data) ...
 }
 \keyword{datasets}

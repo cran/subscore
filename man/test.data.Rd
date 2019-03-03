@@ -5,27 +5,24 @@
 A list of objects that include both test information and subscores.
 }
 \description{
-This list consists of four objects. The first three objects are item responses on the three subscales. 
-The fourth object is the response data on the whole test.
+This list consists of four objects. The first three objects are item responses on the three subscales (algebra, geometry, and measurement). The fourth object is the response data on the total test.
 }
-\usage{data(test.data)}
+\usage{data("test.data")}
 \format{
   The format is:
-
 List of 4
-
- $ subtest.1 :'data.frame':	150 obs. of  15 variables:
-
- $ subtest.2 :'data.frame':	150 obs. of  15 variables:
-
- $ subtest.3 :'data.frame':	150 obs. of  20 variables:
-
- $ total.test:'data.frame':	150 obs. of  50 variables:
+ $ Algebra    :'data.frame':	150 obs. of  15 variables.
+ 
+ $ Geometry   :'data.frame':	150 obs. of  15 variables.
   
-}
+ $ Measurement:'data.frame':	150 obs. of  20 variables.
+ 
+ $ Math       :'data.frame':	150 obs. of  50 variables.
+ 
+ }
 \details{
-Object 1: Responses of 150 participants to 15 items; Object 2: Responses of 150 participants to 15 items.
-Object 3: Responses of 150 participants to 20 items; Object 4: Responses of 150 participants to 20 items.
+Algebra : Responses of 150 participants to 15 items; Geometry: Responses of 150 participants to 15 items.
+Measurement: Responses of 150 participants to 20 items; Math: Responses of 150 participants to 20 items.
 }
 \examples{
 data(test.data)

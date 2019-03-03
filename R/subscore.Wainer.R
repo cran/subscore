@@ -12,7 +12,8 @@
 #' @import CTT
 #' @import stats
 #' @examples  
-#'        test.data<-data.prep(scored.data,c(3,15,15,20))
+#'        test.data<-data.prep(scored.data,c(3,15,15,20),
+#'                             c("Algebra","Geometry","Measurement", "Math"))
 #'         
 #'         subscore.Wainer(test.data)
 #'         
@@ -27,14 +28,14 @@
 
 subscore.Wainer <- function(test.data) {
   n.j <- length(test.data)-1
-  n.i <- nrow(test.data$total.test)
+  n.i <- nrow(test.data[[length(test.data)]])
   x <- matrix(NA, n.i, n.j)
   for (j in 1:n.j) {	
 	  x[, j] <- rowSums(test.data[[j]],na.rm = T)}
   x.bar <- colMeans(x,na.rm = T)
   rho <- c(NA, n.j)
   for (j in 1:n.j){
-	rho[j] <- reliability(test.data[[j]],NA.Delete=T)$alpha}
+	rho[j] <- itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
   S.obs <- cov(x,use="pairwise.complete.obs")
   S.true <- S.obs
   for (j in 1:n.j) {
@@ -48,15 +49,16 @@ subscore.Wainer <- function(test.data) {
   rho.aug <- c(NA, n.j)
   for (j in 1:n.j){
     rho.aug[j] <- A[j,j]/C[j,j]}
-  colnames(x.true)<-paste("subscore.",1:n.j,sep="")
+  colnames(x.true)<-c(paste('Wainer.',rep(names(test.data)[-length(test.data)]),sep=''))
   SD<-apply(x.true, 2, sd,na.rm=T)
   MEAN<-colMeans(x.true,na.rm=T)
   Aug.reliability<-rho.aug
   summary.list<-list(mean=MEAN, SD=SD, Augmented.reliability=Aug.reliability)
   summary<-do.call(cbind,summary.list)
   Augmented.subscores<-x.true
-  
-  mylist.names <- c(paste ('Original.Subscore.',rep(1:n.j),sep=''),'Total.Score')
+  mylist.names<-names(test.data)
+  rownames(summary)<-mylist.names[1:n.j]
+  colnames(Augmented.subscores)<-mylist.names[1:n.j]
   subscore.list <- as.list(rep(NA, length(mylist.names)))
   names(subscore.list) <- mylist.names
   for (t in 1 : (length(test.data)))  {
