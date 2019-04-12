@@ -9,7 +9,8 @@ CTTsub(test.data, method = "Haberman")
 \arguments{
 \item{test.data}{A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.}
 
-\item{method}{Subscore estimation methods. method="Haberman" (by default) represents the three methods propose by Harberman (2008). 
+\item{method}{Subscore estimation methods. method="Haberman" (by default) represents the three methods proposed by Harberman (2008)
+<doi: 10.3102/1076998607302636>. 
 method="Wainer" represents Wainer's augmented method.}
 }
 \value{
@@ -17,13 +18,16 @@ method="Wainer" represents Wainer's augmented method.}
 \item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
 value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
 vice versa.}
+#' \item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
 \item{subscore.original}{Original subscores and total score.}
 \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 }
 \description{
-This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001). 
+This function estimates true subscores using methods introduced in studies of
+Haberman (2008) <doi: 10.3102/1076998607302636> and Wainer et al. (2001). 
 Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
-whether a subscore or an argumented subscore has added value. Codes of the statistical hypothesis tests are from Sinharay (2019).
+whether a subscore or an augmented subscore has added value. Codes for the hypothesis tests are from Sinharay (2019) 
+<doi: 10.3102/1076998618788862>.
 }
 \examples{
 # Transfering original scored data to a list format
@@ -77,13 +81,13 @@ CTTsub(test.data,method="Wainer")$subscore.augmented
 {
 Haberman, S. J. (2008). 
 "When can subscores have value?."
- Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+ Journal of Educational and Behavioral Statistics, 33(2), 204-229. doi:10.3102/1076998607302636. 
 }
 
 {
 Sinharay, S. (2019). 
 "Added Value of Subscores and Hypothesis Testing."
- Journal of Educational and Behavioral Statistics, 44(1), 25-44. 
+ Journal of Educational and Behavioral Statistics, 44(1), 25-44. doi:10.3102/1076998618788862.
 }
 
 {

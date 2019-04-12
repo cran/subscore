@@ -2,7 +2,7 @@
 % Please edit documentation in R/subscore.corr.r
 \name{subscore.corr}
 \alias{subscore.corr}
-\title{Computing correlation indices for subscores and the total score..}
+\title{Computing correlation indices for subscores and the total score.}
 \usage{
 subscore.corr(test.data)
 }

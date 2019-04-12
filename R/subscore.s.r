@@ -1,6 +1,6 @@
 #' Computing subscores using Haberman's method based on observed subscores.
 #' @description This function estimate true subscores based on observed subscores, 
-#' using the method introduced by Haberman (2008).
+#' using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
 #' @param test.data A list that contains subscale responses and the total test responses. It 
 #' can be obtained using the function 'data.prep'.
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
@@ -26,7 +26,7 @@
 #' @references {
 #' Haberman, S. J. (2008). 
 #' "When can subscores have value?."
-#'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+#'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. doi:10.3102/1076998607302636.
 #' }
 
 
@@ -47,7 +47,7 @@ subscore.s<-function (test.data) {
   
   mylist.names <- names(test.data)
   subscore.list <- as.list(rep(NA, length(mylist.names)))
-  names(subscore.list) <- mylist.names
+  names(subscore.list) <- names(test.data)
   for (t in 1 : (n.tests))  {
     subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = T)
   }  
@@ -58,13 +58,7 @@ subscore.s<-function (test.data) {
   for (r in 1:(n.tests)) {
     reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
-  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)
-  if (sum(disattenuated.corr[upper.tri(disattenuated.corr)]>1)>1) {
-    warning ("There are disattenuated correlation values exceed 1. PRMSE values should be used with caution 
-             and the corresponding (augmented) subscore does not have added value.",
-             call. = FALSE)
-  }
-  
+  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)
@@ -98,10 +92,7 @@ subscore.s<-function (test.data) {
   subscore.information.list<-list(Original.reliability=reliability.alpha, 
                                   PRMSE.s=PRMSE.s)
   subscore.information<-do.call(cbind,subscore.information.list)
-  
-  rownames.list<-c(paste('Subscore.',rep(names(test.data)[-length(test.data)]),sep=''),names(test.data)[length(test.data)])
-  rownames(subscore.information)<-rownames.list
-  
+  rownames(subscore.information)<-names(test.data)
   subscore.original<-do.call(cbind,subscore.list)
   subscore.s<-do.call(cbind,subscore.list.RegOnSub)
   
@@ -112,7 +103,12 @@ subscore.s<-function (test.data) {
  
   summary.list<-list(Orig.mean=Orig.mean, Orig.sd=Orig.sd,subscore.s.mean=subscore.s.mean,subscore.s.sd=subscore.s.sd)
   summary<-do.call(cbind,summary.list)
-  rownames(summary)<-rownames.list[1:n.subtests]
+  rownames(summary)<-names(test.data)[1:n.subtests]
+  
+  if (sum(PRMSE.s[PRMSE.s>1],na.rm=T)>=1) {
+    warning ("PRMSE value(s) exceeds 1. The corresponding (augmented) subscore does not have added value.",
+             call. = FALSE)
+  }
   
   return (list(summary=summary,
                Correlation=corr,

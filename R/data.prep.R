@@ -27,7 +27,7 @@ data.prep<-function (scored.data, subtest.infor, subtest.names=NULL) {
   } else {
     test.names <- subtest.names}
   
-  if (length(subtest.names)!= (n.subtests+1)) {
+  if ((is.null(subtest.names)==F) & (length(subtest.names)!= (n.subtests+1))) {
     warning ("Name of the total test is needed after the subtest names in subtest.names.",
              call. = FALSE)
   }

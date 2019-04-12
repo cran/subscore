@@ -18,7 +18,7 @@ can be obtained using the function 'data.prep'.}
 }
 \description{
 This function estimate true subscores based on observed subscores, 
-using the method introduced by Haberman (2008).
+using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
 }
 \examples{
 # Transfering scored response data to the requried list format
@@ -38,6 +38,6 @@ subscore.s(test.data)$subscore.s
 {
 Haberman, S. J. (2008). 
 "When can subscores have value?."
- Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+ Journal of Educational and Behavioral Statistics, 33(2), 204-229. doi:10.3102/1076998607302636.
 }
 }

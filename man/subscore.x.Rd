@@ -18,7 +18,7 @@ can be obtained using the function 'data.prep'.}
 }
 \description{
 This function estimates true subscores based on observed total scores 
-using the method introduced by Haberman (2008).
+using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
 }
 \examples{
        test.data<-data.prep(scored.data,c(3,15,15,20), 
@@ -36,6 +36,6 @@ using the method introduced by Haberman (2008).
 {
 Haberman, S. J. (2008). 
 "When can subscores have value?."
- Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+ Journal of Educational and Behavioral Statistics, 33(2), 204-229.doi:10.3102/1076998607302636
 }
 }

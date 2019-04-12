@@ -24,7 +24,4 @@ List of 4
 Algebra : Responses of 150 participants to 15 items; Geometry: Responses of 150 participants to 15 items.
 Measurement: Responses of 150 participants to 20 items; Math: Responses of 150 participants to 20 items.
 }
-\examples{
-data(test.data)
-}
 \keyword{datasets}

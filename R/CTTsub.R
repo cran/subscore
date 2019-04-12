@@ -1,14 +1,18 @@
 #' This main function estimates true subscores using different methods based on original CTT scores.
-#' @description This function estimates true subscores using methods introduced in Haberman (2008), and Wainer et al. (2001). 
+#' @description This function estimates true subscores using methods introduced in studies of
+#' Haberman (2008) <doi: 10.3102/1076998607302636> and Wainer et al. (2001). 
 #' Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
-#' whether a subscore or an argumented subscore has added value. Codes of the statistical hypothesis tests are from Sinharay (2019).
+#' whether a subscore or an augmented subscore has added value. Codes for the hypothesis tests are from Sinharay (2019) 
+#' <doi: 10.3102/1076998618788862>.
 #' @param test.data A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.
-#' @param  method Subscore estimation methods. method="Haberman" (by default) represents the three methods propose by Harberman (2008). 
+#' @param  method Subscore estimation methods. method="Haberman" (by default) represents the three methods proposed by Harberman (2008)
+#' <doi: 10.3102/1076998607302636>. 
 #' method="Wainer" represents Wainer's augmented method.         
 #' @return \item{summary}{Summary of estimated subscores (e.g., mean, sd).}
 #' \item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
 #' value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
 #' vice versa.}
+#' #' \item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
 #' \item{subscore.original}{Original subscores and total score.}
 #' \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 #' @import CTT
@@ -66,12 +70,12 @@
 #' @references {
 #' Haberman, S. J. (2008). 
 #' "When can subscores have value?."
-#'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. 
+#'  Journal of Educational and Behavioral Statistics, 33(2), 204-229. doi:10.3102/1076998607302636. 
 #' }
 #' @references {
 #' Sinharay, S. (2019). 
 #' "Added Value of Subscores and Hypothesis Testing."
-#'  Journal of Educational and Behavioral Statistics, 44(1), 25-44. 
+#'  Journal of Educational and Behavioral Statistics, 44(1), 25-44. doi:10.3102/1076998618788862.
 #' }
 #' @references {
 #' Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
@@ -93,9 +97,8 @@ CTTsub<-function (test.data, method="Haberman") {
   n.items.total<-n.items[n.tests]
   reliability.alpha<-rep(NA, (n.tests))  
   
-  mylist.names<-names(test.data)
-  subscore.list <- as.list(rep(NA, length(mylist.names)))
-  names(subscore.list) <- mylist.names
+  subscore.list <- as.list(rep(NA, n.tests))
+  names(subscore.list) <- names(test.data)
   for (t in 1 : (n.tests))  {
     subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = T)
   }  
@@ -116,14 +119,8 @@ CTTsub<-function (test.data, method="Haberman") {
     reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
   Reliabilities<-cbind(reliability.alpha, stratefied.alpha)
-  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)
+  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
 
-  if (sum(disattenuated.corr[upper.tri(disattenuated.corr)]>1)>1) {
-    warning ("There are disattenuated correlation values exceed 1. PRMSE values should be used with caution 
-             and the corresponding (augmented) subscore does not have added value.",
-             call. = FALSE)
-  }
-  
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)
@@ -201,9 +198,7 @@ CTTsub<-function (test.data, method="Haberman") {
                                   PRMSE.s=PRMSE.s, PRMSE.x=PRMSE.x, PRMSE.sx=PRMSE.sx,
                                   added.value.s=added.value.s,added.value.sx=added.value.sx)
   subscore.information<-do.call(cbind,subscore.information.list)
-  
-  rownames.list<-c(paste('Subscore.',rep(names(test.data)[-length(test.data)]),sep=''),names(test.data)[length(test.data)])
-  rownames(subscore.information)<-rownames.list
+  rownames(subscore.information)<-names(test.data)
 
   subscore.original<-do.call(cbind,subscore.list)
   subscore.s<-do.call(cbind,subscore.list.RegOnSub)
@@ -223,10 +218,14 @@ CTTsub<-function (test.data, method="Haberman") {
                      subscore.x.mean=subscore.x.mean,subscore.x.sd=subscore.x.sd,subscore.sx.mean=subscore.sx.mean,
                      subscore.sx.sd=subscore.sx.sd)
   summary<-do.call(cbind,summary.list)
-  rownames(summary)<-rownames.list[1:n.subtests]
+  rownames(summary)<-names(test.data)[1:n.subtests]
   
   #below code from Sinharay (2019)
   # Compute PRMSEs suggested by Sinharay (2013) from Haberman's PRMSEs
+  Olkin.Z<-rep(NA,n.tests)
+  Williams.t<-rep(NA,n.tests)
+  Hedges.Olkin.Z<-rep(NA,n.tests)
+  
   PRs<-PRMSE.s[1:n.subtests]*PRMSE.s[1:n.subtests]
   PRx<-PRMSE.x[1:n.subtests]*PRMSE.s[1:n.subtests]
   PRsx<-PRMSE.sx[1:n.subtests]*PRMSE.s[1:n.subtests]
@@ -266,17 +265,28 @@ CTTsub<-function (test.data, method="Haberman") {
   zx<-compsd(sqrt(PRx),sqrt(PRs),rsx,sqrt(PRsx),n.subtests,n)
   hedgesolkin<-ifelse(PRs>PRx,zs,zx)
   
+  Olkin.Z[1:n.subtests]<-olk
+  Williams.t[1:n.subtests]<-wil
+  Hedges.Olkin.Z[1:n.subtests]<-hedgesolkin
+  
   subscore.information.list<-list(Alpha=reliability.alpha, 
                                   PRMSE.s=PRMSE.s, PRMSE.x=PRMSE.x, PRMSE.sx=PRMSE.sx,
-                                  added.value.s=added.value.s,added.value.sx=added.value.sx,
-                                  Olkin.Z=c(olk,"NA"), Williams.t=c(wil,"NA"), 
-                                  Hedges.Olkin.Z=c(hedgesolkin,"NA"))
+                                  added.value.s=as.numeric(added.value.s),added.value.sx=as.numeric(added.value.sx),
+                                  Olkin.Z=Olkin.Z, Williams.t=Williams.t, 
+                                  Hedges.Olkin.Z=Hedges.Olkin.Z)
   subscore.information<-do.call(cbind,subscore.information.list)
+  rownames(subscore.information)<-names(test.data)
+  
+  if (sum(PRMSE.s[PRMSE.s>1],na.rm=T)>=1 | sum(PRMSE.x[PRMSE.x>1],na.rm=T)>=1 | sum(PRMSE.sx[PRMSE.sx>1],na.rm=T)>1) {
+    warning ("PRMSE value(s) exceeds 1. The corresponding (augmented) subscore does not have added value.",
+             call. = FALSE)
+  }
   
   return (list(summary=summary,
                Correlation=corr,
                Disattenuated.correlation=disattenuated.corr, 
-               PRMSE=subscore.information, 
+               PRMSE=subscore.information[,1:6], 
+               PRMSE.test=subscore.information,
                subscore.original=subscore.original,
                subscore.s=subscore.s,
                subscore.x=subscore.x,

@@ -1,4 +1,4 @@
-#' Computing correlation indices for subscores and the total score..
+#' Computing correlation indices for subscores and the total score.
 #' @description This function computes Cronback's Alpha and Stratified Alpha. 
 #' Disattenuated correlations are also provided.
 #' @param test.data A list that contains subscale responses and the total test responses. It 
@@ -40,9 +40,8 @@ subscore.corr<-function (test.data) {
   alpha<-rep(NA, (n.tests))  
   stratefied.alpha<-rep(NA, (n.tests))
   
-  mylist.names<-names(test.data)
-  subscore.list <- as.list(rep(NA, length(mylist.names)))
-  names(subscore.list) <- mylist.names
+  subscore.list <- as.list(rep(NA, n.tests))
+  names(subscore.list) <- names(test.data)
   for (t in 1 : (n.tests))  {
     subscore.list[[t]]<- rowSums(test.data[[t]],na.rm = T)
   }  
@@ -61,9 +60,9 @@ subscore.corr<-function (test.data) {
   for (r in 1:(n.tests)) {
     alpha[r]<-itemAnalysis(test.data[[r]],itemReport=F,NA.Delete=T)$alpha
   } 
-  disattenuated.corr<-disattenuated.cor(corr, alpha)
+  disattenuated.corr<-disattenuated.cor(corr, alpha)[-n.tests,-n.tests]
   Reliabilities<-cbind(alpha, stratefied.alpha)
-  
+  rownames(Reliabilities) <- names(test.data)
   return (list(Correlation=corr,
                Disattenuated.correlation=disattenuated.corr, 
                Reliabilities=Reliabilities))}  
