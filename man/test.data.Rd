@@ -10,18 +10,21 @@ This list consists of four objects. The first three objects are item responses o
 \usage{data("test.data")}
 \format{
   The format is:
-List of 4
- $ Algebra    :'data.frame':	150 obs. of  15 variables.
+A list with 4 objects:
+
+ $ Algebra    :'data.frame':	150 obs. of  15 variables:
  
- $ Geometry   :'data.frame':	150 obs. of  15 variables.
-  
- $ Measurement:'data.frame':	150 obs. of  20 variables.
- 
- $ Math       :'data.frame':	150 obs. of  50 variables.
- 
- }
+ $ Geometry   :'data.frame':	150 obs. of  15 variables:
+
+ $ Measurement:'data.frame':	150 obs. of  20 variables:
+
+ $ Math       :'data.frame':	150 obs. of  50 variables:
+}
 \details{
-Algebra : Responses of 150 participants to 15 items; Geometry: Responses of 150 participants to 15 items.
-Measurement: Responses of 150 participants to 20 items; Math: Responses of 150 participants to 20 items.
+Algebra: Responses of 150 participants to 15 items; Geometry: Responses of 150 participants to 15 items.
+Measurement: Responses of 150 participants to 20 items; Math: Responses of 150 participants to 20 items.}
+\examples{
+data(test.data)
+# maybe str(test.data); plot(test.data) ...
 }
 \keyword{datasets}

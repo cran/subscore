@@ -7,10 +7,11 @@
 CTTsub(test.data, method = "Haberman")
 }
 \arguments{
-\item{test.data}{A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.}
+\item{test.data}{A list that contains item responses of all subtests and the entire test, 
+which can be obtained using function 'data.prep'.}
 
-\item{method}{Subscore estimation methods. method="Haberman" (by default) represents the three methods proposed by Harberman (2008)
-<doi: 10.3102/1076998607302636>. 
+\item{method}{Subscore estimation methods. method="Haberman" (by default) represents 
+the three methods proposed by Haberman (2008) <doi:10.3102/1076998607302636>. 
 method="Wainer" represents Wainer's augmented method.}
 }
 \value{
@@ -18,19 +19,19 @@ method="Wainer" represents Wainer's augmented method.}
 \item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
 value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
 vice versa.}
-#' \item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
+\item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
 \item{subscore.original}{Original subscores and total score.}
 \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 }
 \description{
 This function estimates true subscores using methods introduced in studies of
-Haberman (2008) <doi: 10.3102/1076998607302636> and Wainer et al. (2001). 
+Haberman (2008) <doi:10.3102/1076998607302636> and Wainer et al. (2001) <doi:10.4324/9781410604729>. 
 Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
 whether a subscore or an augmented subscore has added value. Codes for the hypothesis tests are from Sinharay (2019) 
 <doi: 10.3102/1076998618788862>.
 }
 \examples{
-# Transfering original scored data to a list format
+# Transferring original scored data to a list format
 # that can be used in other functions.
 test.data<-data.prep(scored.data,c(3,15,15,20),
                      c("Algebra","Geometry","Measurement", "Math"))
@@ -94,5 +95,6 @@ Sinharay, S. (2019).
 Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
 "Augmented scores - "Borrowing strength" to compute scores based on small numbers of items."
  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
+ doi:10.4324/9781410604729.
 }
 }

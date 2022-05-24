@@ -1,8 +1,8 @@
 #' Computing subscores using Haberman's method based on observed total scores.
 #' @description This function estimates true subscores based on observed total scores 
 #' using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
-#' @param test.data A list that contains subscale responses and the total test responses. It 
-#' can be obtained using the function 'data.prep'.
+#' @param test.data A list that contains item responses of all subtests and 
+#' the entire test, which can be obtained using function 'data.prep'.
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
 #' \item{PRMSE}{PRMSEs of obtained subscores (for Haberman's methods only).}
 #' \item{subscore.original}{Original observed subscores and total score.} 
@@ -52,9 +52,9 @@ subscore.x<-function (test.data) {
   corr<-cor(subscore.original.matrix)
   
   for (r in 1:(n.tests)) {
-    reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
+    reliability.alpha[r]<-CTT::itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
-  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
+  disattenuated.corr<-CTT::disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
   
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {

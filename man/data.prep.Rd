@@ -2,30 +2,31 @@
 % Please edit documentation in R/data.prep.R
 \name{data.prep}
 \alias{data.prep}
-\title{This function prepares data into a requried list format}
+\title{This function prepares data into a required list format}
 \usage{
 data.prep(scored.data, subtest.infor, subtest.names = NULL)
 }
 \arguments{
-\item{scored.data}{Original scored dataset with rows as individuals and columns as items.}
+\item{scored.data}{Original scored data set with rows as individuals and columns as items.}
 
 \item{subtest.infor}{A numerical vector. The first number indicates the number of subtests,
-followed by numbers o items on each subscale.}
+followed by numbers of items on each subscale.}
 
-\item{subtest.names}{Names of the subscales AND the total test. The default is NULL. If not provided, names of 
-"subtest.1, subtest.2, etc." will be assigned.}
+\item{subtest.names}{Names of the subscales AND the entire test. The default is NULL. If not provided, names of 
+"subtest.1", "subtest.2",..., will be assigned.}
 }
 \value{
-A list that contains subscale responses and the total test response.
+A list that contains item responses of all subtests and the entire test. 
+The list is then used by other functions (e.g., CTTsub) in the package to obtain subscores.
 }
 \description{
-This function generates a list of datasets using the scored original dataset, 
+This function generates a list of data sets using the scored original data set, 
 which can be used as objects in subscore computing functions.
 }
 \examples{
         subtest.infor<-c(3,15,15,20) 
         subtest.names<-c("Algebra","Geometry","Measurement", "Math")
         # This math test consists of 3 subtests, which have 15 algebra 
-        #items, 15 geometry items, and 20 measurement items.
-        test.data<-data.prep(scored.data,subtest.infor,subtest.names)
+        # items, 15 geometry items, and 20 measurement items.
+        test.data<-data.prep(scored.data, subtest.infor, subtest.names)
 }

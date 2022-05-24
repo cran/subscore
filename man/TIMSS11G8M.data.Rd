@@ -5,7 +5,7 @@
 The 2011 TIMSS Grade 8 Mathematics Assessment Dataset
 }
 \description{
-The TIMSS dataset used in Dai, Svetina, and Wang (2017) (doi:10.3102/1076998617716462).It contained responses from
+The TIMSS dataset used in Dai, Svetina, and Wang (2017) (doi:10.3102/1076998617716462). It contained responses from
 765 students to 32 items with 6 to 9 items on each of the subscales of (1) number (Q1 to Q9), (2) algebra (Q10 to Q18), 
 (3) geometry (Q19 to Q24), and (4) data and chance (Q25 to Q30). Omitted responses were treated as incorrect.  
 }
@@ -54,5 +54,6 @@ Dai, S., Svetina, D., & Wang, X. (2017).
 }
 \examples{
 data(TIMSS11G8M.data)
+# maybe str(TIMSS11G8M.data); plot(TIMSS11G8M.data) ...
 }
 \keyword{datasets}

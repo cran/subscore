@@ -16,10 +16,12 @@ Yen.Q3(scored.data, IRT.model = "2pl")
 
 \item{Q3.weighted}{A matrix of Q3 statistics 
 as obtained by weighting the residual values to reflect 
-the number of examinees with each response patten.}
+the number of examinees with each response pattern.}
 }
 \description{
-This function calculates Yen's Q3 statistics (Yen, 1984; 1993) for unidimensional Rasch, 1-, 2-, 
+This function calculates Yen's Q3 statistics as introduced 
+in Yen (1984) <doi: 10.1177/014662168400800201> and 
+Yen (1993) <doi: 10.1111/j.1745-3984.1993.tb00423.x> for unidimensional Rasch, 1-, 2-, 
 and 3-PL logistic IRT models to assess the local independence assumption.
 }
 \examples{
@@ -33,12 +35,13 @@ and 3-PL logistic IRT models to assess the local independence assumption.
 {
 Yen, W. M. (1984).
 "Effects of local item dependence on the fit and equating performance of the three-parameter logistic model."
-Applied Psychological Measurement, 8(2), 125-145. 
+Applied Psychological Measurement, 8(2), 125-145. doi: 10.1177/014662168400800201.
 }
 
 {
 Yen, W. M. (1993).
 "Scaling performance assessments: Strategies for managing local item dependence. " 
 ournal of educational measurement, 30(3), 187-213. 
+doi: 10.1111/j.1745-3984.1993.tb00423.x.
 }
 }

@@ -1,8 +1,8 @@
 #' Computing subscores using Haberman's method based on observed subscores.
 #' @description This function estimate true subscores based on observed subscores, 
 #' using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
-#' @param test.data A list that contains subscale responses and the total test responses. It 
-#' can be obtained using the function 'data.prep'.
+#' @param test.data A list that contains item responses of all subtests and 
+#' the entire test, which can be obtained using function 'data.prep'.
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
 #' \item{PRMSE}{PRMSEs of obtained subscores (for Haberman's methods only).}
 #' \item{subscore.original}{Original subscores and total score.}
@@ -10,11 +10,11 @@
 #' @import CTT
 #' @import stats
 #' @examples 
-#' # Transfering scored response data to the requried list format
+#' # Transferring scored response data to the required list format
 #' test.data<-data.prep(scored.data,c(3,15,15,20),
 #'                      c("Algebra","Geometry","Measurement", "Math"))
 #'   
-#' #Estimate true subscores using Hamerman's method based on observed subscores     
+#' # Estimate true subscores using Haberman's method based on observed subscores     
 #' subscore.s(test.data) 
 #'        
 #' subscore.s(test.data)$summary
@@ -56,9 +56,9 @@ subscore.s<-function (test.data) {
   corr<-cor(subscore.original.matrix)
   
   for (r in 1:(n.tests)) {
-    reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
+    reliability.alpha[r]<-CTT::itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
-  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
+  disattenuated.corr<-CTT::disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
     sigma.obs[t]<-sd(subscore.list[[t]],na.rm = TRUE)

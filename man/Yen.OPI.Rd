@@ -7,16 +7,19 @@
 Yen.OPI(test.data)
 }
 \arguments{
-\item{test.data}{A list that contains datasets of all subtests and the total test, which can be obtained using function 'data.prep'.}
+\item{test.data}{A list that contains item responses of all subtests 
+and the entire test, which can be obtained using function 'data.prep'.}
 }
 \value{
 \item{summary}{It contains statistical summary of OPI (mean & sd).}
 \item{OPI}{Estimated OPI values}
 }
 \description{
-This function estimates subscores using Yen's Objective Performance Index (OPI; Yen, 1987). 
+This function estimates subscores using Yen's Objective Performance Index (OPI; Yen, 1987)
+<https://www.ets.org/research/policy_research_reports/publications/paper/1987/hrap>. 
 Yen's OPI (Yen, 1987) is a procedure combining Bayesian method and item response theory 
-(IRT; Embretson & Reise, 2000; Reckase, 1997). 
+(IRT; Embretson & Reise, 2000 <https://psycnet.apa.org/record/2000-03918-000>;
+Reckase, 1997 <doi: 10.1177/0146621697211002>). 
 This method pulls an examinee's performance on a certain objective (i.e., subscale) 
 towards his/her total test performance in order to get a more stable and precise 
 objective subscore estimate.
@@ -27,25 +30,25 @@ objective subscore estimate.
                              c("Algebra","Geometry","Measurement", "Math"))
         
         Yen.OPI(test.data)
-        
-        Yen.OPI(test.data)$summary
-        Yen.OPI(test.data)$OPI
 }
 \references{
 {
 Embretson, S. E., & Reise, S. P. (2013).
-"Item response theory". Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
+"Item response theory". Mahwah, NJ: Lawrence Erlbaum Associates, Inc.
+https://psycnet.apa.org/record/2000-03918-000. 
 }
 
 {
 Reckase, M. D. (1997).
 "The past and future of multidimensional item response theory". 
-Applied Psychological Measurement, 21(1), 25-36.  
+Applied Psychological Measurement, 21(1), 25-36. 
+doi: 10.1177/0146621697211002. 
 }
 
 {
 Yen, W. M. (1987, June).
 "A Bayesian/IRT index of objective performance". 
 Paper presented at annual meeting of the Psychometric Society, Montreal, Quebec, Canada.
+https://www.ets.org/research/policy_research_reports/publications/paper/1987/hrap.
 }
 }

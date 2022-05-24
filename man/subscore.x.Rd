@@ -7,8 +7,8 @@
 subscore.x(test.data)
 }
 \arguments{
-\item{test.data}{A list that contains subscale responses and the total test responses. It 
-can be obtained using the function 'data.prep'.}
+\item{test.data}{A list that contains item responses of all subtests and 
+the entire test, which can be obtained using function 'data.prep'.}
 }
 \value{
 \item{summary}{Summary of obtained subscores (e.g., mean, sd).}

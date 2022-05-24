@@ -1,19 +1,20 @@
 #' Computing correlation indices for subscores and the total score.
-#' @description This function computes Cronback's Alpha and Stratified Alpha. 
+#' @description This function computes Cronbach's Alpha and Stratified 
+#' Alpha (Cronbach et al., 1965) <doi: 10.1177/001316446502500201>. 
 #' Disattenuated correlations are also provided.
-#' @param test.data A list that contains subscale responses and the total test responses. It 
-#' can be obtained using the function 'data.prep'.
+#' @param test.data A list that contains item responses of all subtests and the entire test, which can
+#' be obtained using function ’data.prep’.
 #' @return \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
 #' \item{correlation}{Correlation indices as indicated above.}
 #' @import CTT
 #' @import stats
 #' @import sirt
 #' @examples 
-#' # Transfering scored response data to the requried list format
+#' # Transferring scored response data to the required list format
 #' test.data<-data.prep(scored.data,c(3,15,15,20),
 #'                      c("Algebra","Geometry","Measurement", "Math"))
 #'   
-#' #Estimate true subscores using Hamerman's method based on observed subscores     
+#' #Estimate true subscores using Haberman's method based on observed subscores     
 #' subscore.corr(test.data) 
 #'        
 #' subscore.s(test.data)$summary
@@ -22,7 +23,8 @@
 #' @references {
 #' Cronbach, L., Schonenman, P., & McKie, D. (1965). 
 #' "Alpha coefficients for stratified-parallel tests."
-#'  Educational and Psychological Measurement, 25, 291-282. 
+#'  Educational and Psychological Measurement, 25, 291-282.
+#'  doi: 10.1177/001316446502500201. 
 #' }
 
 subscore.corr<-function (test.data) {
@@ -53,14 +55,14 @@ subscore.corr<-function (test.data) {
     on.exit(sink()) 
     invisible(force(x)) 
   } 
-  str.alpha<-quiet(stratified.cronbach.alpha(test.data[[n.tests]], 
+  str.alpha<-quiet(sirt::stratified.cronbach.alpha(test.data[[n.tests]], 
                    itemstrata=itemstrata)$alpha.stratified)
   stratefied.alpha<-c(str.alpha[-1],str.alpha[1])
   
   for (r in 1:(n.tests)) {
-    alpha[r]<-itemAnalysis(test.data[[r]],itemReport=F,NA.Delete=T)$alpha
+    alpha[r]<-CTT::itemAnalysis(test.data[[r]],itemReport=F,NA.Delete=T)$alpha
   } 
-  disattenuated.corr<-disattenuated.cor(corr, alpha)[-n.tests,-n.tests]
+  disattenuated.corr<-CTT::disattenuated.cor(corr, alpha)[-n.tests,-n.tests]
   Reliabilities<-cbind(alpha, stratefied.alpha)
   rownames(Reliabilities) <- names(test.data)
   return (list(Correlation=corr,

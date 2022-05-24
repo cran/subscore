@@ -1,12 +1,14 @@
 #' Computing Yen's Q3 statistic for unidimensional Rasch, 1-, 2-, and 3-PL logistic IRT models 
-#' @description This function calculates Yen's Q3 statistics (Yen, 1984; 1993) for unidimensional Rasch, 1-, 2-, 
+#' @description This function calculates Yen's Q3 statistics as introduced 
+#' in Yen (1984) <doi: 10.1177/014662168400800201> and 
+#' Yen (1993) <doi: 10.1111/j.1745-3984.1993.tb00423.x> for unidimensional Rasch, 1-, 2-, 
 #' and 3-PL logistic IRT models to assess the local independence assumption.  
 #' @param scored.data Item response data with rows as individuals and columns as items.
 #' @param IRT.model IRT model ('Rasch', '1pl', '2pl', or '3pl') to be used.The default option is 2pl.
 #' @return \item{Q3}{A matrix of Q3 statistics}
 #' @return \item{Q3.weighted}{A matrix of Q3 statistics 
 #' as obtained by weighting the residual values to reflect 
-#' the number of examinees with each response patten.}
+#' the number of examinees with each response pattern.}
 #' @import ltm
 #' @import stats
 #' @import boot
@@ -19,13 +21,14 @@
 #' @references {
 #' Yen, W. M. (1984).
 #' "Effects of local item dependence on the fit and equating performance of the three-parameter logistic model."
-#' Applied Psychological Measurement, 8(2), 125-145. 
+#' Applied Psychological Measurement, 8(2), 125-145. doi: 10.1177/014662168400800201.
 #' } 
 #'   
 #' @references {
 #' Yen, W. M. (1993).
 #' "Scaling performance assessments: Strategies for managing local item dependence. " 
 #' ournal of educational measurement, 30(3), 187-213. 
+#' doi: 10.1111/j.1745-3984.1993.tb00423.x.
 #' }
 
 Yen.Q3<-function(scored.data,IRT.model="2pl") {
@@ -33,7 +36,7 @@ Yen.Q3<-function(scored.data,IRT.model="2pl") {
   n.items<-dim(scored.data)[2]
 
   if (IRT.model=="Rasch") {
-    fit.rasch<-rasch(scored.data, constraint=cbind(ncol(scored.data)+1,1))
+    fit.rasch<-ltm::rasch(scored.data, constraint=cbind(ncol(scored.data)+1,1))
     b.s<-coef(fit.rasch)[,1]
     thetas<-ltm::factor.scores(fit.rasch,method = "EAP")$score.dat$z1
     n.thetas<-length(thetas)

@@ -1,18 +1,19 @@
 #' This main function estimates true subscores using different methods based on original CTT scores.
 #' @description This function estimates true subscores using methods introduced in studies of
-#' Haberman (2008) <doi: 10.3102/1076998607302636> and Wainer et al. (2001). 
+#' Haberman (2008) <doi:10.3102/1076998607302636> and Wainer et al. (2001) <doi:10.4324/9781410604729>. 
 #' Hypothesis tests (i.e., Olkin' Z,Williams's t, and Hedges-Olkin's Z) are used to determine 
 #' whether a subscore or an augmented subscore has added value. Codes for the hypothesis tests are from Sinharay (2019) 
 #' <doi: 10.3102/1076998618788862>.
-#' @param test.data A list that contains item responses of all subtests and the total test, which can be obtained using function 'data.prep'.
-#' @param  method Subscore estimation methods. method="Haberman" (by default) represents the three methods proposed by Harberman (2008)
-#' <doi: 10.3102/1076998607302636>. 
+#' @param test.data A list that contains item responses of all subtests and the entire test, 
+#' which can be obtained using function 'data.prep'.
+#' @param  method Subscore estimation methods. method="Haberman" (by default) represents 
+#' the three methods proposed by Haberman (2008) <doi:10.3102/1076998607302636>. 
 #' method="Wainer" represents Wainer's augmented method.         
 #' @return \item{summary}{Summary of estimated subscores (e.g., mean, sd).}
 #' \item{PRMSE}{(a) PRMSE values of estimated subscores (for Haberman's methods only).(b) Decisions on whether subscores have added 
 #' value - added.value.s (or added.value.sx) = 1 means subscore.s (or subscore.sx) has added value, and  added.value.s (or added.value.sx) = 0
 #' vice versa.}
-#' #' \item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
+#' \item{PRMSE.test}{All information in PRMSE plus results of hypopthesis testing based on Sinharay (2019) <doi:10.3102/1076998618788862>.}
 #' \item{subscore.original}{Original subscores and total score.}
 #' \item{estimated.subscores}{Subscores computed using selected method. Three sets of subscores will be returned if method = "Haberman".}
 #' @import CTT
@@ -20,7 +21,7 @@
 #' @import sirt
 #' @import cocor
 #' @examples
-#' # Transfering original scored data to a list format
+#' # Transferring original scored data to a list format
 #' # that can be used in other functions.
 #' test.data<-data.prep(scored.data,c(3,15,15,20),
 #'                      c("Algebra","Geometry","Measurement", "Math"))
@@ -81,6 +82,7 @@
 #' Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
 #' "Augmented scores - "Borrowing strength" to compute scores based on small numbers of items."
 #'  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
+#'  doi:10.4324/9781410604729.
 #' }
 
 CTTsub<-function (test.data, method="Haberman") {
@@ -111,15 +113,15 @@ CTTsub<-function (test.data, method="Haberman") {
     on.exit(sink()) 
     invisible(force(x)) 
   } 
-  str.alpha<-quiet(stratified.cronbach.alpha(test.data[[n.tests]], 
+  str.alpha<-quiet(sirt::stratified.cronbach.alpha(test.data[[n.tests]], 
                                              itemstrata=itemstrata)$alpha.stratified)
   stratefied.alpha<-c(str.alpha[-1],str.alpha[1])
   
   for (r in 1:(n.tests)) {
-    reliability.alpha[r]<-itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
+    reliability.alpha[r]<-CTT::itemAnalysis(test.data[[r]],,NA.Delete=T, itemReport=F)$alpha
   } 
   Reliabilities<-cbind(reliability.alpha, stratefied.alpha)
-  disattenuated.corr<-disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
+  disattenuated.corr<-CTT::disattenuated.cor(corr, reliability.alpha)[-n.tests,-n.tests]
 
   sigma.obs<-rep(NA,n.tests)
   for (t in 1:n.tests) {
@@ -234,9 +236,9 @@ CTTsub<-function (test.data, method="Haberman") {
   wil<-rep(0,n.subtests)
   n<-n.cases[length(test.data)]
   for (j in 1:n.subtests)
-    {olk[j]=cocor.dep.groups.overlap(sqrt(PRs[j]),sqrt(PRx[j]),
+    {olk[j]=cocor::cocor.dep.groups.overlap(sqrt(PRs[j]),sqrt(PRx[j]),
                                      rsx[j],n)@olkin1967$statistic
-  wil[j]=cocor.dep.groups.overlap(sqrt(PRs[j]),
+  wil[j]=cocor::cocor.dep.groups.overlap(sqrt(PRs[j]),
                                   sqrt(PRx[j]),rsx[j],n)@williams1959$statistic}
   
   compsd<-function(r01,r02,r12,r012,ns,n) {
@@ -301,7 +303,7 @@ CTTsub<-function (test.data, method="Haberman") {
     x.bar <- colMeans(x,na.rm = T)
     rho <- c(NA, n.j)
     for (j in 1:n.j){
-      rho[j] <- itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
+      rho[j] <- CTT::itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
     S.obs <- cov(x,use="pairwise.complete.obs")
     S.true <- S.obs
     for (j in 1:n.j) {

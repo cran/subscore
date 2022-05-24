@@ -1,12 +1,18 @@
 #' Estimating true subscores using Wainer's augmentation method
-#' @description This function estimates subscores using Wainer's augmentation method (Wainer et. al., 2001). 
-#' The central idea of this 
-#' procedure is that, the estimation of subscores will be improved by shrinking the individual 
-#' observed subscores towards some aggregate values (i.e., group mean subscores). The extent of 
-#' the shrinkage depends on the closeness of the subscale being estimated with other subscales as 
-#' well as reliabilities of all the subscales. Wainer's augmentation is a multivariate version of 
-#' Kelly's formula (Kelly, 1947). For details of Wainer's augmentation subscoring method, please refer to Wainer et al. (2001).
-#' @param test.data A list that contains datasets of all subtests and the total test, which can be obtained using function 'data.prep'.
+#' @description This function estimates subscores using Wainer's augmentation 
+#' method (Wainer et. al., 2001) <doi:10.4324/9781410604729>. 
+#' The central idea of this procedure is that, the estimation of subscores 
+#' will be improved by shrinking the individual observed subscores towards 
+#' some aggregate values (i.e., group mean subscores). The extent of the 
+#' shrinkage depends on the closeness of the subscale being estimated with 
+#' other subscales as well as reliabilities of all the subscales. 
+#' Wainer's augmentation is a multivariate version of Kelly's 
+#' formula (Kelly, 1947) 
+#' <https://www.hup.harvard.edu/catalog.php?isbn=9780674330009>. 
+#' For details of Wainer's augmentation subscoring method, 
+#' please refer to Wainer et al. (2001) <doi:10.4324/9781410604729>.
+#' @param test.data A list that contains item responses of all subtests and 
+#' the entire test, which can be obtained using function 'data.prep'.
 #' @return \item{summary}{It contains statistical summary of the augmented subscores (mean, sd, and reliability).}
 #' \item{Augmented.subscores}{It contains augmented subscores that are obtained using Wainer's method.} 
 #' @import CTT
@@ -24,6 +30,11 @@
 #' Wainer, H., Vevea, J., Camacho, F., Reeve, R., Rosa, K., Nelson, L., Swygert, K., & Thissen, D. (2001). 
 #' "Augmented scores - "Borrowing strength" to compute scores based on small numbers of items"
 #'  In Thissen, D. & Wainer, H. (Eds.), Test scoring (pp.343 - 387). Mahwah, NJ: Lawrence Erlbaum Associates, Inc. 
+#'  doi:10.4324/9781410604729.
+#' }
+#' @references {
+#' Kelley, T. L. (1947). Fundamentals of statistics. Harvard University Press. 
+#' https://www.hup.harvard.edu/catalog.php?isbn=9780674330009.
 #' }
 
 subscore.Wainer <- function(test.data) {
@@ -35,7 +46,7 @@ subscore.Wainer <- function(test.data) {
   x.bar <- colMeans(x,na.rm = T)
   rho <- c(NA, n.j)
   for (j in 1:n.j){
-	rho[j] <- itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
+	rho[j] <- CTT::itemAnalysis(test.data[[j]],NA.Delete=T, itemReport=F)$alpha}
   S.obs <- cov(x,use="pairwise.complete.obs")
   S.true <- S.obs
   for (j in 1:n.j) {

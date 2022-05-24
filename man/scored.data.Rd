@@ -61,14 +61,14 @@ These subscales consist of 15, 15, and 20 items respectively.
     \item{\code{V47}}{Item 47}
     \item{\code{V48}}{Item 48}
     \item{\code{V49}}{Item 49}
-    \item{\code{V50}}{Item 50}  }
+    \item{\code{V50}}{Item 50}
+  }
 }
 \details{
-A dataset containing responses of 150 examinees to a total number of 50 items on three subscales (15, 15, 20 items respectively).
+A dataset containing responses of 150 examinees to a total number of 50 items on three subscales (15, 15, and 20 items respectively).
 }
 \examples{
-#read data
 data(scored.data)
-## maybe str(scored.data) ; plot(scored.data) ...
+# maybe str(scored.data); plot(scored.data) ...
 }
 \keyword{datasets}

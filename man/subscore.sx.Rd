@@ -7,8 +7,8 @@
 subscore.sx(test.data)
 }
 \arguments{
-\item{test.data}{A list that contains subscale responses and the total test responses. It 
-can be obtained using the function 'data.prep'.}
+\item{test.data}{A list that contains item responses of all subtests and 
+the entire test, which can be obtained using function 'data.prep'.}
 }
 \value{
 \item{summary}{Summary of obtained subscores (e.g., mean, sd).}
@@ -17,7 +17,7 @@ can be obtained using the function 'data.prep'.}
 \item{subscore.sx}{Subscores that are estimated based on both the observed total score and observed subscore.}
 }
 \description{
-This function estimate true subscores based on both observed stotal scores and observed 
+This function estimate true subscores based on both observed total scores and observed 
 subscores using the method introduced by Haberman (2008) <doi:10.3102/1076998607302636>.
 }
 \examples{
